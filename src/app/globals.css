@@ -1,0 +1,94 @@
+@import "tailwindcss";
+
+:root {
+  /* Aegean service palette */
+  --ink: #1a2f3a;
+  --ink-muted: #4a6570;
+  --sand: #f3eee4;
+  --sand-deep: #e6dfd2;
+  --foam: #faf8f3;
+  --olive: #3d6b4f;
+  --olive-hover: #325a42;
+  --olive-soft: #dce8e0;
+  --coral: #c45c3e;
+  --coral-soft: #f5e0d8;
+  --line: #d4cbc0;
+  --focus: #2a6f7c;
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 40px;
+
+  --shadow-soft: 0 1px 2px rgb(26 47 58 / 6%);
+  --background: var(--sand);
+  --foreground: var(--ink);
+}
+
+@theme inline {
+  --color-ink: var(--ink);
+  --color-ink-muted: var(--ink-muted);
+  --color-sand: var(--sand);
+  --color-sand-deep: var(--sand-deep);
+  --color-foam: var(--foam);
+  --color-olive: var(--olive);
+  --color-olive-hover: var(--olive-hover);
+  --color-olive-soft: var(--olive-soft);
+  --color-coral: var(--coral);
+  --color-coral-soft: var(--coral-soft);
+  --color-line: var(--line);
+  --color-focus: var(--focus);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-display: var(--font-fraunces);
+  --font-sans: var(--font-source-sans);
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+}
+
+@layer base {
+  * {
+    border-color: var(--line);
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background:
+      radial-gradient(1200px 600px at 10% -10%, #ebe4d6 0%, transparent 55%),
+      radial-gradient(900px 500px at 100% 0%, #e2ebe6 0%, transparent 50%),
+      var(--sand);
+    color: var(--ink);
+    font-family: var(--font-source-sans), system-ui, sans-serif;
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+
+  h1,
+  h2,
+  h3,
+  .font-display {
+    font-family: var(--font-fraunces), Georgia, serif;
+    font-weight: 560;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
+  }
+}
+
+@layer utilities {
+  .tap-target {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
