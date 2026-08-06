@@ -6,7 +6,7 @@ Accepted
 
 ## Context
 
-MVP needs a coherent, phone-legible UI without a heavy component library. Brand lives on leblebee.com; first viewport and app shell should feel local and calm, not generic SaaS purple.
+MVP needs a coherent, phone-legible UI without a heavy component library. Brand lives on www.leblebee.com; first viewport and app shell should feel local and calm, not generic SaaS purple.
 
 ## Decision
 

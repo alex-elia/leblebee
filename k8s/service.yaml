@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: leblebee
+  namespace: leblebee
+  labels:
+    app: leblebee
+spec:
+  type: ClusterIP
+  selector:
+    app: leblebee
+  ports:
+    - name: http
+      port: 80
+      targetPort: http
+      protocol: TCP

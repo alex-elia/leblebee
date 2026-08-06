@@ -3,6 +3,9 @@ import { Button, StatusChip } from "@/components/ui";
 import type { TaskStatus } from "@/components/ui/status-chip";
 import { MessageComposer } from "@/components/tasks/message-composer";
 import { MessageThread } from "@/components/tasks/message-thread";
+import { HandoffGallery } from "@/components/tasks/handoff-gallery";
+import { HandoffCompleteForm } from "../handoff-complete-form";
+import { getHandoffPhotoUrls } from "../handoff-actions";
 import { updateTaskStatus } from "@/app/client/tasks/actions";
 import { requireProfile } from "@/lib/auth/session";
 import type { Metadata } from "next";
@@ -38,10 +41,7 @@ export default async function SupplierTaskPage({
     ? task.properties[0]
     : task.properties;
 
-  if (
-    profile.role === "supplier" &&
-    provider?.user_id !== user.id
-  ) {
+  if (profile.role === "supplier" && provider?.user_id !== user.id) {
     notFound();
   }
 
@@ -55,7 +55,7 @@ export default async function SupplierTaskPage({
 
   const { data: memory } = await supabase
     .from("property_memory")
-    .select("bullet")
+    .select("bullet, kind")
     .eq("property_id", task.property_id)
     .order("sort_order");
 
@@ -69,9 +69,18 @@ export default async function SupplierTaskPage({
 
   const authorIds = [...new Set((messages ?? []).map((m) => m.author_id))];
   const { data: authors } = authorIds.length
-    ? await supabase.from("profiles").select("id, display_name").in("id", authorIds)
+    ? await supabase
+        .from("profiles")
+        .select("id, display_name")
+        .in("id", authorIds)
     : { data: [] as { id: string; display_name: string | null }[] };
-  const authorMap = new Map((authors ?? []).map((a) => [a.id, a.display_name]));
+  const authorMap = new Map(
+    (authors ?? []).map((a) => [a.id, a.display_name]),
+  );
+
+  const photos = await getHandoffPhotoUrls(id);
+  const canComplete =
+    task.status === "accepted" || task.status === "assigned";
 
   return (
     <PersonaShell
@@ -108,14 +117,14 @@ export default async function SupplierTaskPage({
           {translation?.body ?? task.description}
         </p>
         {property?.address_notes ? (
-          <p className="mt-4 border-t border-line pt-3 text-sm text-ink-muted whitespace-pre-wrap">
+          <p className="mt-4 border-t border-line pt-3 text-sm whitespace-pre-wrap text-ink-muted">
             Access: {property.address_notes}
           </p>
         ) : null}
         {memory && memory.length > 0 ? (
           <ul className="mt-3 list-disc space-y-1 pl-5 text-sm text-ink-muted">
             {memory.map((m) => (
-              <li key={m.bullet}>{m.bullet}</li>
+              <li key={`${m.kind}-${m.bullet}`}>{m.bullet}</li>
             ))}
           </ul>
         ) : null}
@@ -129,16 +138,26 @@ export default async function SupplierTaskPage({
             <Button type="submit">Confirm received</Button>
           </form>
         ) : null}
-        {task.status === "accepted" || task.status === "assigned" ? (
-          <form action={updateTaskStatus}>
-            <input type="hidden" name="task_id" value={task.id} />
-            <input type="hidden" name="status" value="done" />
-            <Button type="submit" variant="secondary">
-              Mark done
-            </Button>
-          </form>
-        ) : null}
       </div>
+
+      {canComplete ? (
+        <div className="mb-8">
+          <HandoffCompleteForm taskId={task.id} />
+        </div>
+      ) : null}
+
+      {(task.status === "done" ||
+        task.status === "follow_up" ||
+        task.status === "closed" ||
+        photos.length > 0) && (
+        <section className="mb-8 border-t border-line pt-6">
+          <h2 className="font-display mb-3 text-2xl text-ink">Handoff photos</h2>
+          {task.completion_notes ? (
+            <p className="mb-3 text-sm text-ink-muted">{task.completion_notes}</p>
+          ) : null}
+          <HandoffGallery photos={photos} />
+        </section>
+      )}
 
       <section className="border-t border-line pt-6">
         <h2 className="font-display mb-4 text-2xl text-ink">Messages</h2>

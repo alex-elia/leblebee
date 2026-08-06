@@ -2,34 +2,37 @@ import Link from "next/link";
 import { type ReactNode } from "react";
 import { signOut } from "@/app/login/actions";
 import { Button } from "@/components/ui/button";
+import { LanguageSwitcher } from "@/components/ui/language-switcher";
 import type { UserRole } from "@/lib/auth/roles";
-import { homePathForRole, roleLabel } from "@/lib/auth/roles";
+import { homePathForRole } from "@/lib/auth/roles";
+import { getI18n } from "@/lib/i18n/get-locale";
+import type { Messages } from "@/lib/i18n/messages";
 
 type NavItem = { href: string; label: string };
 
-function navForRole(role: UserRole): NavItem[] {
+function navForRole(role: UserRole, t: Messages): NavItem[] {
   switch (role) {
     case "admin":
       return [
-        { href: "/admin", label: "Overview" },
-        { href: "/client/properties", label: "Properties" },
-        { href: "/client/suppliers", label: "Suppliers" },
-        { href: "/client/tasks", label: "Tasks" },
-        { href: "/design-system", label: "Design system" },
+        { href: "/admin", label: t.nav.overview },
+        { href: "/client/properties", label: t.nav.properties },
+        { href: "/client/suppliers", label: t.nav.suppliers },
+        { href: "/client/tasks", label: t.nav.tasks },
+        { href: "/design-system", label: t.nav.designSystem },
       ];
     case "client":
       return [
-        { href: "/client", label: "Home" },
-        { href: "/client/properties", label: "Properties" },
-        { href: "/client/suppliers", label: "Suppliers" },
-        { href: "/client/tasks", label: "Tasks" },
+        { href: "/client", label: t.nav.home },
+        { href: "/client/properties", label: t.nav.properties },
+        { href: "/client/suppliers", label: t.nav.suppliers },
+        { href: "/client/tasks", label: t.nav.tasks },
       ];
     case "supplier":
-      return [{ href: "/supplier", label: "My tasks" }];
+      return [{ href: "/supplier", label: t.nav.myTasks }];
   }
 }
 
-export function PersonaShell({
+export async function PersonaShell({
   children,
   role,
   displayName,
@@ -42,7 +45,8 @@ export function PersonaShell({
   email?: string | null;
   title?: string;
 }) {
-  const nav = navForRole(role);
+  const { locale, t } = await getI18n();
+  const nav = navForRole(role, t);
 
   return (
     <div className="mx-auto flex min-h-full w-full max-w-3xl flex-col px-4 pb-10 pt-6 sm:px-6">
@@ -55,12 +59,13 @@ export function PersonaShell({
             Leblebee
           </Link>
           <p className="mt-0.5 text-sm text-ink-muted">
-            {roleLabel(role)}
+            {t.roles[role]}
             {displayName ? ` · ${displayName}` : ""}
             {email ? ` · ${email}` : ""}
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-3">
+          <LanguageSwitcher locale={locale} />
           <nav className="flex flex-wrap items-center gap-3 text-sm font-semibold text-ink-muted">
             {title ? (
               <span className="hidden text-ink sm:inline">{title}</span>
@@ -72,8 +77,12 @@ export function PersonaShell({
             ))}
           </nav>
           <form action={signOut}>
-            <Button variant="ghost" type="submit" className="!min-h-0 px-2 py-1 text-sm">
-              Sign out
+            <Button
+              variant="ghost"
+              type="submit"
+              className="!min-h-0 px-2 py-1 text-sm"
+            >
+              {t.nav.signOut}
             </Button>
           </form>
         </div>

@@ -1,0 +1,137 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: leblebee
+  namespace: leblebee
+  labels:
+    app: leblebee
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  progressDeadlineSeconds: 600
+  selector:
+    matchLabels:
+      app: leblebee
+  template:
+    metadata:
+      labels:
+        app: leblebee
+    spec:
+      imagePullSecrets:
+        - name: ghcr-secret
+      containers:
+        - name: leblebee
+          image: ghcr.io/alex-elia/leblebee:production-latest
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 3010
+              protocol: TCP
+          env:
+            - name: NODE_ENV
+              value: "production"
+            - name: PORT
+              value: "3010"
+            - name: HOSTNAME
+              value: "0.0.0.0"
+            - name: NEXT_PUBLIC_APP_URL
+              valueFrom:
+                secretKeyRef:
+                  name: leblebee-secrets
+                  key: NEXT_PUBLIC_APP_URL
+            - name: NEXT_PUBLIC_SUPABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: leblebee-secrets
+                  key: NEXT_PUBLIC_SUPABASE_URL
+            - name: NEXT_PUBLIC_SUPABASE_ANON_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: leblebee-secrets
+                  key: NEXT_PUBLIC_SUPABASE_ANON_KEY
+            - name: SUPABASE_SERVICE_ROLE_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: leblebee-secrets
+                  key: SUPABASE_SERVICE_ROLE_KEY
+            - name: LLM_PROVIDER
+              valueFrom:
+                secretKeyRef:
+                  name: leblebee-secrets
+                  key: LLM_PROVIDER
+                  optional: true
+            - name: LLM_MODEL
+              valueFrom:
+                secretKeyRef:
+                  name: leblebee-secrets
+                  key: LLM_MODEL
+                  optional: true
+            - name: OVH_AI_ENDPOINTS_ACCESS_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: leblebee-secrets
+                  key: OVH_AI_ENDPOINTS_ACCESS_TOKEN
+                  optional: true
+            - name: OVH_AI_ENDPOINTS_MODEL_URL
+              valueFrom:
+                secretKeyRef:
+                  name: leblebee-secrets
+                  key: OVH_AI_ENDPOINTS_MODEL_URL
+                  optional: true
+            - name: OVH_AI_UNIFIED_MODEL_URL
+              valueFrom:
+                secretKeyRef:
+                  name: leblebee-secrets
+                  key: OVH_AI_UNIFIED_MODEL_URL
+                  optional: true
+            - name: OVH_AI_REASONING_MODEL_LOW
+              valueFrom:
+                secretKeyRef:
+                  name: leblebee-secrets
+                  key: OVH_AI_REASONING_MODEL_LOW
+                  optional: true
+            - name: OVH_AI_REASONING_MODEL_HIGH
+              valueFrom:
+                secretKeyRef:
+                  name: leblebee-secrets
+                  key: OVH_AI_REASONING_MODEL_HIGH
+                  optional: true
+            - name: OVH_AI_EMBEDDING_MODEL
+              valueFrom:
+                secretKeyRef:
+                  name: leblebee-secrets
+                  key: OVH_AI_EMBEDDING_MODEL
+                  optional: true
+            - name: OVH_AI_REASONING_MAX_TOKENS
+              valueFrom:
+                secretKeyRef:
+                  name: leblebee-secrets
+                  key: OVH_AI_REASONING_MAX_TOKENS
+                  optional: true
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "100m"
+            limits:
+              memory: "768Mi"
+              cpu: "500m"
+          livenessProbe:
+            httpGet:
+              path: /api/health
+              port: http
+            initialDelaySeconds: 25
+            periodSeconds: 15
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /api/health
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3

@@ -1,8 +1,9 @@
 # Leblebee — Product Spec (MVP)
 
-**Domain:** [leblebee.com](https://leblebee.com)  
+**Domain:** [www.leblebee.com](https://www.leblebee.com)  
 **Audience:** Remote short-term rental hosts + local providers (start: founder dogfood + small Greece owner circle)  
 **Stack:** Next.js, local Supabase CLI (Auth/DB/Storage), OVH AI Endpoints — see ADR 001  
+**License:** MIT (public repo) · hosted cloud free for now; fair fee/commission later  
 **Status:** Active MVP — communication-first, not PMS
 
 ## Promise

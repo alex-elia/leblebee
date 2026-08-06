@@ -1,5 +1,3 @@
-export { AppShell } from "./app-shell";
-export { PersonaShell } from "./persona-shell";
 export { Button } from "./button";
 export { TextField, TextAreaField } from "./field";
 export { StatusChip, type TaskStatus } from "./status-chip";

@@ -198,6 +198,23 @@ export async function createAndAssignTask(
     model,
   });
 
+  const { data: supplier } = await supabase
+    .from("providers")
+    .select("email, user_id")
+    .eq("id", supplierId)
+    .maybeSingle();
+
+  if (supplier?.email) {
+    const { notifySupplierOfTask } = await import(
+      "@/app/supplier/tasks/handoff-actions"
+    );
+    await notifySupplierOfTask({
+      supplierEmail: supplier.email,
+      taskId: task.id,
+      taskTitle: title,
+    });
+  }
+
   revalidatePath("/client/tasks");
   revalidatePath("/supplier");
   redirect(`/client/tasks/${task.id}`);
@@ -292,7 +309,21 @@ export async function updateTaskStatus(formData: FormData) {
   const status = String(formData.get("status") ?? "");
   if (!taskId || !status) return;
 
-  await supabase.from("tasks").update({ status, updated_at: new Date().toISOString() }).eq("id", taskId);
+  // Suppliers must use the handoff form (photos) to mark done
+  if (status === "done" && profile.role === "supplier") {
+    return;
+  }
+
+  await supabase
+    .from("tasks")
+    .update({
+      status,
+      updated_at: new Date().toISOString(),
+      ...(status === "done"
+        ? { completed_at: new Date().toISOString() }
+        : {}),
+    })
+    .eq("id", taskId);
   await supabase.from("task_events").insert({
     task_id: taskId,
     actor_id: user.id,

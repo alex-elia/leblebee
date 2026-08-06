@@ -3,6 +3,8 @@ import { Button, StatusChip } from "@/components/ui";
 import type { TaskStatus } from "@/components/ui/status-chip";
 import { MessageComposer } from "@/components/tasks/message-composer";
 import { MessageThread } from "@/components/tasks/message-thread";
+import { HandoffGallery } from "@/components/tasks/handoff-gallery";
+import { getHandoffPhotoUrls } from "@/app/supplier/tasks/handoff-actions";
 import { updateTaskStatus } from "../actions";
 import { requireProfile } from "@/lib/auth/session";
 import type { Metadata } from "next";
@@ -67,6 +69,8 @@ export default async function ClientTaskDetailPage({
   const authorMap = new Map(
     (authors ?? []).map((a) => [a.id, a.display_name]),
   );
+
+  const photos = await getHandoffPhotoUrls(id);
 
   return (
     <PersonaShell
@@ -143,6 +147,19 @@ export default async function ClientTaskDetailPage({
           </form>
         ) : null}
       </div>
+
+      {(task.status === "done" ||
+        task.status === "follow_up" ||
+        task.status === "closed" ||
+        photos.length > 0) && (
+        <section className="mb-8 border-t border-line pt-6">
+          <h2 className="font-display mb-3 text-2xl text-ink">Handoff photos</h2>
+          {task.completion_notes ? (
+            <p className="mb-3 text-sm text-ink-muted">{task.completion_notes}</p>
+          ) : null}
+          <HandoffGallery photos={photos} />
+        </section>
+      )}
 
       <section className="border-t border-line pt-6">
         <h2 className="font-display mb-4 text-2xl text-ink">Messages</h2>

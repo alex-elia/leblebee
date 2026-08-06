@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Fraunces, Source_Sans_3 } from "next/font/google";
+import { getLocale } from "@/lib/i18n/get-locale";
 import "./globals.css";
 
 const fraunces = Fraunces({
@@ -20,18 +21,20 @@ export const metadata: Metadata = {
     template: "%s · Leblebee",
   },
   description:
-    "Bilingual host–provider ops for short-term rentals. Clear tasks, shared context, better stays.",
-  metadataBase: new URL("https://leblebee.com"),
+    "Easier short-term rental ops for apartment and house owners, and for local suppliers who manage several owners. Better stays, more return.",
+  metadataBase: new URL("https://www.leblebee.com"),
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const locale = await getLocale();
+
   return (
     <html
-      lang="en"
+      lang={locale}
       className={`${fraunces.variable} ${sourceSans.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col text-ink">{children}</body>

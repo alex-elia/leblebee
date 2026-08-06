@@ -10,7 +10,7 @@ Smartphone use is critical for providers on site. Native (React Native / Expo) a
 
 ## Decision
 
-- Ship a **mobile-first Next.js web app** on leblebee.com
+- Ship a **mobile-first Next.js web app** on www.leblebee.com
 - Provider UX: one task at a time, large tap targets, camera `capture` for handoff photos
 - Optional PWA “Add to Home Screen” later; not required for MVP
 - Revisit native only if web camera/upload or offline needs fail dogfood
