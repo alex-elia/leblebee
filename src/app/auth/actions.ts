@@ -28,6 +28,26 @@ async function appOrigin() {
   );
 }
 
+function isLocalDevOrigin(origin: string) {
+  try {
+    const host = new URL(origin).hostname;
+    return host === "localhost" || host === "127.0.0.1";
+  } catch {
+    return false;
+  }
+}
+
+function magicLinkSentMessage(origin: string, forRegistration = false) {
+  if (isLocalDevOrigin(origin)) {
+    return forRegistration
+      ? "Account link sent. Open Mailpit (http://127.0.0.1:54324) to finish registration."
+      : "Check Mailpit for the magic link (http://127.0.0.1:54324).";
+  }
+  return forRegistration
+    ? "Account link sent. Check your email to finish registration."
+    : "Check your email for the magic link.";
+}
+
 function callbackUrl(origin: string, next: string) {
   const url = new URL("/auth/callback", origin);
   if (next && next !== "/") {
@@ -78,7 +98,7 @@ export async function signInWithMagicLink(
 
   return {
     ok: true,
-    message: "Check your email for the magic link. On local, open Mailpit.",
+    message: magicLinkSentMessage(origin),
   };
 }
 
@@ -132,7 +152,7 @@ export async function registerWithMagicLink(
 
   return {
     ok: true,
-    message: `Account link sent for ${role}. Open Mailpit to finish registration.`,
+    message: magicLinkSentMessage(origin, true),
   };
 }
 

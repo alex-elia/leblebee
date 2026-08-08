@@ -16,6 +16,14 @@ Hosts want frictionless login. Providers (cleaners, handymen) will not tolerate 
 - Providers are invited by email and, once linked, only access **assigned** tasks via RLS
 - Future option (not MVP): signed single-task tokens without a full session for ultra-low friction — same provider UI
 
+## Email delivery
+
+- **Local:** Supabase Inbucket / Mailpit (`supabase/config.toml` `[inbucket]`)
+- **Production (now):** Supabase Auth built-in mailer — `npm run auth:configure-email`
+- **Later:** same Auth API, custom SMTP (Brevo / Resend) via script env or Dashboard
+
+App code always calls `signInWithOtp`; only the Auth mail transport changes. See [EMAIL.md](../EMAIL.md).
+
 ## Consequences
 
 - Email deliverability matters; validate with real cleaner in week one

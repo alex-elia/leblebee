@@ -9,9 +9,10 @@ spec:
   replicas: 1
   strategy:
     type: RollingUpdate
+    # 1 replica on a tight pool: stop old pod, then start new (no CPU surge).
     rollingUpdate:
-      maxSurge: 1
-      maxUnavailable: 0
+      maxSurge: 0
+      maxUnavailable: 1
   progressDeadlineSeconds: 600
   selector:
     matchLabels:

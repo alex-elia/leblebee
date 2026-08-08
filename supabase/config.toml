@@ -94,8 +94,9 @@ api_url = "http://127.0.0.1"
 # OpenAI API Key to use for Supabase AI in the Supabase Studio.
 openai_api_key = "env(OPENAI_API_KEY)"
 
-# Email testing server. Emails sent with the local dev setup are not actually sent - rather, they
-# are monitored, and you can view the emails that would have been sent from the web interface.
+# Local only: Auth emails go to Mailpit (Inbucket UI). Never enable [auth.email.smtp] here
+# or local magic links will leave the machine. Prod uses Supabase built-in mail (or remote SMTP).
+# See docs/EMAIL.md
 [inbucket]
 enabled = true
 # Port to use for the email testing server web interface.
@@ -197,8 +198,8 @@ password_requirements = ""
 # rp_origins = ["http://127.0.0.1:3000"]
 
 [auth.rate_limit]
-# Number of emails that can be sent per hour. Requires auth.email.smtp to be enabled.
-email_sent = 2
+# Local Mailpit: keep this high for dogfood. Remote rate limits are set in the dashboard / script.
+email_sent = 100
 # Number of SMS messages that can be sent per hour. Requires auth.sms to be enabled.
 sms_sent = 30
 # Number of anonymous sign-ins that can be made per hour per IP address. Requires enable_anonymous_sign_ins = true.
@@ -224,7 +225,7 @@ enable_signup = true
 # If enabled, a user will be required to confirm any email change on both the old, and new email
 # addresses. If disabled, only the new email is required to confirm.
 double_confirm_changes = true
-# If enabled, users need to confirm their email address before signing in.
+# Magic links: no separate password confirmation step.
 enable_confirmations = false
 # If enabled, users will need to reauthenticate or have logged in recently to change their password.
 secure_password_change = false
@@ -235,26 +236,31 @@ otp_length = 6
 # Number of seconds before the email OTP expires (defaults to 1 hour).
 otp_expiry = 3600
 
-# Use a production-ready SMTP server
+# LOCAL: leave SMTP disabled → Auth delivers to [inbucket] / Mailpit.
+# PROD: use Supabase built-in mailer (no SMTP) via scripts/configure-auth-email.ps1
+# LATER (Brevo / Resend / etc.): enable custom SMTP on the *remote* project only
+# (Dashboard → Auth → SMTP, or the same script with SMTP_* env vars). Do NOT enable
+# this block for local `supabase start` or magic links stop appearing in Mailpit.
 # [auth.email.smtp]
 # enabled = true
-# host = "smtp.sendgrid.net"
+# host = "env(SUPABASE_AUTH_SMTP_HOST)"
 # port = 587
-# user = "apikey"
-# pass = "env(SENDGRID_API_KEY)"
-# admin_email = "admin@email.com"
-# sender_name = "Admin"
+# user = "env(SUPABASE_AUTH_SMTP_USER)"
+# pass = "env(SUPABASE_AUTH_SMTP_PASS)"
+# admin_email = "env(SUPABASE_AUTH_SMTP_ADMIN_EMAIL)"
+# sender_name = "Leblebee"
 
-# Uncomment to customize email template
-# [auth.email.template.invite]
-# subject = "You have been invited"
-# content_path = "./supabase/templates/invite.html"
+[auth.email.template.magic_link]
+subject = "Your Leblebee sign-in link"
+content_path = "./supabase/templates/magic_link.html"
 
-# Uncomment to customize notification email template
-# [auth.email.notification.password_changed]
-# enabled = true
-# subject = "Your password has been changed"
-# content_path = "./templates/password_changed_notification.html"
+[auth.email.template.invite]
+subject = "You are invited to Leblebee"
+content_path = "./supabase/templates/invite.html"
+
+[auth.email.template.confirmation]
+subject = "Confirm your Leblebee email"
+content_path = "./supabase/templates/confirmation.html"
 
 [auth.sms]
 # Allow/disallow new user signups via SMS to your project.

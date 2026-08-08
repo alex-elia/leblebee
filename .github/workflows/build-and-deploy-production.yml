@@ -125,8 +125,14 @@ jobs:
             kubectl get deployment ${{ env.DEPLOYMENT_NAME }} -n "$NAMESPACE" >/dev/null \
               || (echo "Deployment missing. Apply kale-infra production/k8s/leblebee first." && exit 1)
 
-            kubectl get secret leblebee-secrets -n "$NAMESPACE" >/dev/null \
-              || (echo "Missing leblebee-secrets. Create on jump host (kale-infra README)." && exit 1)
+            # Upsert runtime secret from GitHub (app + Supabase only; AI stays out of kube)
+            kubectl create secret generic leblebee-secrets \
+              --namespace="$NAMESPACE" \
+              --from-literal=NEXT_PUBLIC_APP_URL='${{ secrets.NEXT_PUBLIC_APP_URL }}' \
+              --from-literal=NEXT_PUBLIC_SUPABASE_URL='${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}' \
+              --from-literal=NEXT_PUBLIC_SUPABASE_ANON_KEY='${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}' \
+              --from-literal=SUPABASE_SERVICE_ROLE_KEY='${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}' \
+              --dry-run=client -o yaml | kubectl apply -f -
 
             kubectl get secret ghcr-secret -n "$NAMESPACE" >/dev/null \
               || (echo "Missing ghcr-secret in $NAMESPACE." && exit 1)

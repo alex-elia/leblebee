@@ -33,5 +33,5 @@ DNS A records for `www.leblebee.com` and apex `leblebee.com` → **`51.83.34.135
 ## Consequences
 
 - Same migrations for local and cloud
-- Magic-link emails: Mailpit locally; Supabase Auth email in production
+- Magic-link emails: Mailpit locally; Supabase Auth built-in mailer in production (SMTP/Brevo later via Auth config)
 - No staging environment for now (direct prod)

@@ -10,7 +10,8 @@
     "db:start": "supabase start",
     "db:stop": "supabase stop",
     "db:reset": "supabase db reset",
-    "db:sync-env": "powershell -File scripts/sync-supabase-env.ps1"
+    "db:sync-env": "powershell -File scripts/sync-supabase-env.ps1",
+    "auth:configure-email": "powershell -File scripts/configure-auth-email.ps1"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.4",

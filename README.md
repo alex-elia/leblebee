@@ -30,9 +30,11 @@ npm run dev
 - App: http://localhost:3010  
 - Design system: http://localhost:3010/design-system (admin)  
 - Supabase Studio: http://127.0.0.1:54323  
-- Mailpit (magic links): http://127.0.0.1:54324  
+- Mailpit (local magic links): http://127.0.0.1:54324  
 
-### DB scripts
+Email strategy (local Mailpit / prod Supabase mail / later Brevo): [docs/EMAIL.md](docs/EMAIL.md)
+
+### DB / Auth scripts
 
 | Script | Purpose |
 |--------|---------|
@@ -40,6 +42,7 @@ npm run dev
 | `npm run db:stop` | `supabase stop` |
 | `npm run db:reset` | Reset DB + reapply migrations |
 | `npm run db:sync-env` | Write local keys into `.env.local` |
+| `npm run auth:configure-email` | Set prod Auth Site URL + Supabase mailer (or SMTP_*) |
 
 ## Stack
 
