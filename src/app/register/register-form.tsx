@@ -1,24 +1,96 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { authCallbackUrl } from "@/lib/auth/app-origin";
+import { magicLinkSentMessage } from "@/lib/auth/magic-link-messages";
 import {
-  registerWithMagicLink,
-  type AuthActionState,
-} from "@/app/auth/actions";
+  homePathForRole,
+  isAdminEmail,
+  isRegistrableRole,
+  type UserRole,
+} from "@/lib/auth/roles";
+import { createClient } from "@/lib/supabase/client";
 import { Button, TextField } from "@/components/ui";
 import Link from "next/link";
+import { useState, type FormEvent } from "react";
 
-const initial: AuthActionState = {};
+type FormState = {
+  ok?: boolean;
+  error?: string;
+  message?: string;
+};
 
 export function RegisterForm() {
-  const [state, formAction, pending] = useActionState(
-    registerWithMagicLink,
-    initial,
-  );
+  const [state, setState] = useState<FormState>({});
+  const [pending, setPending] = useState(false);
   const [persona, setPersona] = useState<"client" | "supplier" | "">("");
 
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setPending(true);
+    setState({});
+
+    const form = event.currentTarget;
+    const formData = new FormData(form);
+    const email = String(formData.get("email") ?? "")
+      .trim()
+      .toLowerCase();
+    const displayName = String(formData.get("display_name") ?? "").trim();
+    const personaValue = String(formData.get("persona") ?? "")
+      .trim()
+      .toLowerCase();
+
+    if (!email || !email.includes("@")) {
+      setState({ error: "Enter a valid email address." });
+      setPending(false);
+      return;
+    }
+
+    if (isAdminEmail(email)) {
+      setState({
+        error: "This email is reserved for admin. Use Sign in instead.",
+      });
+      setPending(false);
+      return;
+    }
+
+    if (!isRegistrableRole(personaValue)) {
+      setState({
+        error: "Choose whether you are a Client (property owner) or a Supplier.",
+      });
+      setPending(false);
+      return;
+    }
+
+    const role: UserRole = personaValue;
+    const origin = window.location.origin;
+    const supabase = createClient();
+    const { error } = await supabase.auth.signInWithOtp({
+      email,
+      options: {
+        emailRedirectTo: authCallbackUrl(origin, homePathForRole(role)),
+        data: {
+          role,
+          ...(displayName ? { display_name: displayName } : {}),
+        },
+        shouldCreateUser: true,
+      },
+    });
+
+    setPending(false);
+
+    if (error) {
+      setState({ error: error.message });
+      return;
+    }
+
+    setState({
+      ok: true,
+      message: magicLinkSentMessage(origin, true),
+    });
+  }
+
   return (
-    <form action={formAction} className="flex max-w-md flex-col gap-5">
+    <form onSubmit={handleSubmit} className="flex max-w-md flex-col gap-5">
       <TextField
         label="Display name"
         name="display_name"
@@ -88,15 +160,7 @@ export function RegisterForm() {
       ) : null}
       {state.message ? (
         <p className="rounded-[var(--radius-sm)] bg-olive-soft/60 px-3 py-2 text-sm text-olive">
-          {state.message}{" "}
-          <a
-            className="font-semibold underline"
-            href="http://127.0.0.1:54324"
-            target="_blank"
-            rel="noreferrer"
-          >
-            Open Mailpit
-          </a>
+          {state.message}
         </p>
       ) : null}
       <p className="text-sm text-ink-muted">

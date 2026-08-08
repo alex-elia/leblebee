@@ -52,8 +52,11 @@ Verify the sender domain (SPF/DKIM) in the provider dashboard.
 
 - Local success copy mentions Mailpit.
 - Production success copy tells users to check their inbox.
-- `NEXT_PUBLIC_APP_URL` / request `Origin` build the `emailRedirectTo` callback URL.
+- Magic-link requests run in the **browser** (`createBrowserClient`) so the PKCE verifier cookie stays in the same browser that opens the email link.
+- Callback redirects use `NEXT_PUBLIC_APP_URL` (not `0.0.0.0:3010` from the container bind address).
 
 ## Free-tier note
 
-Supabase’s built-in mailer is rate-limited and fine for dogfood. Move to Brevo/Resend when deliverability or volume becomes an issue.
+Also confirm Supabase **Site URL** is `https://www.leblebee.com` (Dashboard → Auth → URL configuration, or `npm run auth:configure-email`).
+
+Supabase built-in mailer is rate-limited and fine for dogfood. Move to Brevo/Resend when deliverability or volume becomes an issue.

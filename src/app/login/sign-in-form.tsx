@@ -1,24 +1,74 @@
 "use client";
 
-import { useActionState } from "react";
-import {
-  signInWithMagicLink,
-  type AuthActionState,
-} from "@/app/auth/actions";
+import { authCallbackUrl } from "@/lib/auth/app-origin";
+import { magicLinkSentMessage } from "@/lib/auth/magic-link-messages";
+import { createClient } from "@/lib/supabase/client";
 import { Button, TextField } from "@/components/ui";
 import Link from "next/link";
+import { useState, type FormEvent } from "react";
 
-const initial: AuthActionState = {};
+type FormState = {
+  ok?: boolean;
+  error?: string;
+  message?: string;
+};
 
 export function SignInForm({ nextPath }: { nextPath: string }) {
-  const [state, formAction, pending] = useActionState(
-    signInWithMagicLink,
-    initial,
-  );
+  const [state, setState] = useState<FormState>({});
+  const [pending, setPending] = useState(false);
+
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setPending(true);
+    setState({});
+
+    const form = event.currentTarget;
+    const email = String(new FormData(form).get("email") ?? "")
+      .trim()
+      .toLowerCase();
+
+    if (!email || !email.includes("@")) {
+      setState({ error: "Enter a valid email address." });
+      setPending(false);
+      return;
+    }
+
+    const origin = window.location.origin;
+    const supabase = createClient();
+    const { error } = await supabase.auth.signInWithOtp({
+      email,
+      options: {
+        emailRedirectTo: authCallbackUrl(origin, nextPath),
+        shouldCreateUser: false,
+      },
+    });
+
+    setPending(false);
+
+    if (error) {
+      const msg = error.message.toLowerCase();
+      if (
+        msg.includes("signups not allowed") ||
+        msg.includes("user not found") ||
+        msg.includes("unable to validate")
+      ) {
+        setState({
+          error: "No account for this email. Create one first.",
+        });
+        return;
+      }
+      setState({ error: error.message });
+      return;
+    }
+
+    setState({
+      ok: true,
+      message: magicLinkSentMessage(origin),
+    });
+  }
 
   return (
-    <form action={formAction} className="flex max-w-md flex-col gap-5">
-      <input type="hidden" name="next" value={nextPath} />
+    <form onSubmit={handleSubmit} className="flex max-w-md flex-col gap-5">
       <TextField
         label="Email"
         name="email"
@@ -43,15 +93,7 @@ export function SignInForm({ nextPath }: { nextPath: string }) {
       ) : null}
       {state.message ? (
         <p className="rounded-[var(--radius-sm)] bg-olive-soft/60 px-3 py-2 text-sm text-olive">
-          {state.message}{" "}
-          <a
-            className="font-semibold underline"
-            href="http://127.0.0.1:54324"
-            target="_blank"
-            rel="noreferrer"
-          >
-            Open Mailpit
-          </a>
+          {state.message}
         </p>
       ) : null}
       <p className="text-sm text-ink-muted">
