@@ -8,7 +8,8 @@ Skip staging: `main` / `workflow_dispatch` → production only.
 | Repo | Owns |
 |------|------|
 | **[kale-infra](https://github.com/alex-elia/kale-infra)** `production/k8s/leblebee/` | Namespace, Deployment, Service, Ingress, secret template, bootstrap |
-| **[leblebee](https://github.com/alex-elia/leblebee)** GitHub Actions | Build image → GHCR, `supabase db push`, `kubectl set image` |
+| **Supabase GitHub integration** | DB migrations from `supabase/migrations/` on push |
+| **[leblebee](https://github.com/alex-elia/leblebee)** GitHub Actions | Build image → GHCR, deploy edge functions (when present), `kubectl set image` |
 
 ## DNS
 
@@ -22,6 +23,10 @@ Do not point the public site at SSH jump `51.91.150.231`.
 ## Supabase
 
 Project: **`bbvpuxuvtnpfmprufgab`**
+
+**Migrations:** applied by the Supabase ↔ GitHub integration (not in this repo's deploy workflow).
+
+**Edge functions:** add folders under `supabase/functions/<name>/`; CI deploys them automatically on push to `main`.
 
 Auth email (magic links):
 
@@ -58,9 +63,10 @@ Rollout uses replace-in-place (`maxSurge: 0`, `maxUnavailable: 1`) so deploys st
 | `NEXT_PUBLIC_SUPABASE_URL` | `https://bbvpuxuvtnpfmprufgab.supabase.co` |
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | anon / publishable key |
 | `SUPABASE_SERVICE_ROLE_KEY` | service role (runtime + CI upserts k8s secret) |
-| `SUPABASE_ACCESS_TOKEN` | CLI token |
-| `SUPABASE_DB_PASSWORD` | DB password |
-| `SUPABASE_PROJECT_ID` | `bbvpuxuvtnpfmprufgab` |
+| `SUPABASE_ACCESS_TOKEN` | CLI token (edge function deploy + local auth email script) |
+| `SUPABASE_PROJECT_ID` | `bbvpuxuvtnpfmprufgab` (optional; defaults to Leblebee ref) |
 | `LLM_PROVIDER` / `OVH_AI_*` | optional; GitHub only (not required in kube secret) |
+
+`SUPABASE_DB_PASSWORD` is only needed for local CLI (`supabase link`, `db push`), not for production deploy.
 
 After bootstrap + GitHub secrets: push to `main` or run **Build and Deploy to Production**.
