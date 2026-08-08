@@ -43,17 +43,10 @@ export default async function HomePage() {
             </p>
             <div className="mt-7 flex flex-wrap gap-3">
               <Link href="/register">
-                <Button className="bg-foam text-ink hover:bg-sand">
-                  {L.ctaStart}
-                </Button>
+                <Button variant="secondary">{L.ctaStart}</Button>
               </Link>
               <Link href="/login">
-                <Button
-                  variant="ghost"
-                  className="border border-foam/40 text-foam hover:bg-foam/10"
-                >
-                  {L.ctaSignIn}
-                </Button>
+                <Button variant="ghostOnDark">{L.ctaSignIn}</Button>
               </Link>
             </div>
           </div>

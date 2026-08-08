@@ -1,6 +1,6 @@
 import { type ButtonHTMLAttributes } from "react";
 
-type Variant = "primary" | "secondary" | "ghost";
+type Variant = "primary" | "secondary" | "ghost" | "ghostOnDark";
 
 const variants: Record<Variant, string> = {
   primary:
@@ -8,6 +8,9 @@ const variants: Record<Variant, string> = {
   secondary:
     "bg-foam text-ink border border-line hover:bg-sand-deep",
   ghost: "bg-transparent text-ink hover:bg-olive-soft/60",
+  // For dark photography / ink gradients — do not override with text-ink.
+  ghostOnDark:
+    "bg-transparent text-foam border border-foam/40 hover:bg-foam/10",
 };
 
 export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
