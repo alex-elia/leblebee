@@ -10,6 +10,7 @@ RUN npm ci
 FROM node:20-alpine AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
+COPY --from=deps /app/elia-site-tools ./elia-site-tools
 COPY . .
 
 ARG NEXT_PUBLIC_SUPABASE_URL

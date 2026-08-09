@@ -18,7 +18,7 @@ const toolsPrefix = "./elia-site-tools";
 const repo =
   process.env.ELIA_SITE_TOOLS_REPO ??
   "https://github.com/alex-elia/elia-site-tools.git";
-const ref = process.env.ELIA_SITE_TOOLS_REF?.trim() || "";
+const ref = process.env.ELIA_SITE_TOOLS_REF?.trim() || "master";
 
 function hasBuiltPackages(dir) {
   return fs.existsSync(
