@@ -1,3 +1,4 @@
+import { loadCompanionExpertisePrompt } from "@/lib/assistant-playbook/load-playbook";
 import { ovhChat } from "@/lib/ai/ovh";
 import type { PropertyPlaybook } from "@/lib/properties/playbook";
 
@@ -54,7 +55,9 @@ export async function prepareInstructions(input: {
     [
       {
         role: "system",
-        content: `You help short-term rental hosts brief local suppliers clearly across languages.
+        content: `${loadCompanionExpertisePrompt()}
+
+You help short-term rental hosts brief local suppliers clearly across languages.
 Return ONLY valid JSON with keys:
 clarifiedTitle, clarifiedBody, translatedTitle, translatedBody,
 checklist (string array), vagueFlags (string array).

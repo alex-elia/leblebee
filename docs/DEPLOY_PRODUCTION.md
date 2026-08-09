@@ -87,6 +87,8 @@ Admin routes: `/admin`, `/admin/users`, `/admin/activity`, `/admin/intros`, `/ad
 
 Landing page uses `@elia/agent-next` (`GuestAssistant` + `/api/chat`), same stack as Konaki/Onira.
 
+Playbook content: `content/assistant/` (see [ASSISTANT_PLAYBOOK.md](./ASSISTANT_PLAYBOOK.md)). Dev preview: `GET /api/chat/context?locale=en`.
+
 `preinstall` runs `scripts/ensure-elia-tools.mjs`:
 
 - Clones [github.com/alex-elia/elia-site-tools](https://github.com/alex-elia/elia-site-tools) (Docker/CI, fresh clones)

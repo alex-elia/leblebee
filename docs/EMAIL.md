@@ -52,7 +52,8 @@ Verify the sender domain (SPF/DKIM) in the provider dashboard.
 
 - Local success copy mentions Mailpit.
 - Production success copy tells users to check their inbox.
-- Magic-link requests run in the **browser** (`createBrowserClient`) so the PKCE verifier cookie stays in the same browser that opens the email link.
+- Magic-link emails use **token_hash** links (not PKCE `ConfirmationURL`), so sign-in works in incognito, email in-app browsers, and when the link opens in a different browser than the one that requested it.
+- After changing templates in `supabase/templates/`, run `npm run auth:configure-email` so production Supabase picks them up.
 - Callback redirects use `NEXT_PUBLIC_APP_URL` (not `0.0.0.0:3010` from the container bind address).
 
 ## Free-tier note

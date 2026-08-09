@@ -1,12 +1,14 @@
 export function HandoffGallery({
   photos,
+  emptyMessage = "No photos yet.",
+  altPrefix = "Task photo",
 }: {
   photos: { id: string; url: string | null; caption: string | null }[];
+  emptyMessage?: string;
+  altPrefix?: string;
 }) {
   if (photos.length === 0) {
-    return (
-      <p className="text-sm text-ink-muted">No handoff photos yet.</p>
-    );
+    return <p className="text-sm text-ink-muted">{emptyMessage}</p>;
   }
 
   return (
@@ -20,7 +22,7 @@ export function HandoffGallery({
             // eslint-disable-next-line @next/next/no-img-element
             <img
               src={photo.url}
-              alt={photo.caption ?? "Handoff photo"}
+              alt={photo.caption ?? altPrefix}
               className="aspect-square w-full object-cover"
             />
           ) : (

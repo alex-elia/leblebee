@@ -4,8 +4,12 @@ import type { TaskStatus } from "@/components/ui/status-chip";
 import { MessageComposer } from "@/components/tasks/message-composer";
 import { MessageThread } from "@/components/tasks/message-thread";
 import { HandoffGallery } from "@/components/tasks/handoff-gallery";
+import { ArrivalPhotosForm } from "../arrival-photos-form";
 import { HandoffCompleteForm } from "../handoff-complete-form";
-import { getHandoffPhotoUrls } from "../handoff-actions";
+import {
+  getArrivalPhotoUrls,
+  getHandoffPhotoUrls,
+} from "../handoff-actions";
 import { updateTaskStatus } from "@/app/client/tasks/actions";
 import { requireProfile } from "@/lib/auth/session";
 import type { Metadata } from "next";
@@ -78,9 +82,11 @@ export default async function SupplierTaskPage({
     (authors ?? []).map((a) => [a.id, a.display_name]),
   );
 
-  const photos = await getHandoffPhotoUrls(id);
-  const canComplete =
-    task.status === "accepted" || task.status === "assigned";
+  const arrivalPhotos = await getArrivalPhotoUrls(id);
+  const departurePhotos = await getHandoffPhotoUrls(id);
+  const hasArrivalPhotos = arrivalPhotos.length > 0;
+  const canUploadArrival = task.status === "accepted" && !hasArrivalPhotos;
+  const canComplete = task.status === "accepted" && hasArrivalPhotos;
 
   return (
     <PersonaShell
@@ -140,29 +146,63 @@ export default async function SupplierTaskPage({
         ) : null}
       </div>
 
+      {canUploadArrival ? (
+        <div className="mb-8">
+          <ArrivalPhotosForm taskId={task.id} />
+        </div>
+      ) : null}
+
       {canComplete ? (
         <div className="mb-8">
           <HandoffCompleteForm taskId={task.id} />
         </div>
       ) : null}
 
-      {(task.status === "done" ||
+      {(hasArrivalPhotos ||
+        departurePhotos.length > 0 ||
+        task.status === "done" ||
         task.status === "follow_up" ||
-        task.status === "closed" ||
-        photos.length > 0) && (
+        task.status === "closed") && (
         <section className="mb-8 border-t border-line pt-6">
-          <h2 className="font-display mb-3 text-2xl text-ink">Handoff photos</h2>
-          {task.completion_notes ? (
-            <p className="mb-3 text-sm text-ink-muted">{task.completion_notes}</p>
+          <h2 className="font-display mb-3 text-2xl text-ink">Cleaning photos</h2>
+          {hasArrivalPhotos ? (
+            <div className="mb-6">
+              <h3 className="mb-2 text-sm font-semibold uppercase tracking-wider text-ink-muted">
+                On arrival (guest state)
+              </h3>
+              <HandoffGallery
+                photos={arrivalPhotos}
+                emptyMessage="No arrival photos."
+                altPrefix="Arrival photo"
+              />
+            </div>
           ) : null}
-          <HandoffGallery photos={photos} />
+          {departurePhotos.length > 0 ||
+          task.status === "done" ||
+          task.status === "follow_up" ||
+          task.status === "closed" ? (
+            <div>
+              <h3 className="mb-2 text-sm font-semibold uppercase tracking-wider text-ink-muted">
+                On departure (after cleaning)
+              </h3>
+              {task.completion_notes ? (
+                <p className="mb-3 text-sm text-ink-muted">
+                  {task.completion_notes}
+                </p>
+              ) : null}
+              <HandoffGallery
+                photos={departurePhotos}
+                emptyMessage="No departure photos yet."
+                altPrefix="Departure photo"
+              />
+            </div>
+          ) : null}
         </section>
       )}
 
       <section className="border-t border-line pt-6">
         <h2 className="font-display mb-4 text-2xl text-ink">Messages</h2>
         <MessageThread
-          readerIsClient={false}
           messages={(messages ?? []).map((m) => ({
             ...m,
             author_name: authorMap.get(m.author_id),

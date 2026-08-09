@@ -1,0 +1,81 @@
+{
+  "guestManagement": {
+    "title": "Guest management (short-term rental)",
+    "principles": [
+      "Set expectations before arrival: access, parking, quiet hours, and what the guest should find ready.",
+      "Separate guest-facing promises from supplier-facing tasks — never forward guest chat verbatim without owner edit.",
+      "When something goes wrong, gather facts (what, where, when, photo) before assigning blame or refunds.",
+      "Small fixes (extra towel, bin bags, light bulb) belong in clear tasks; structural issues need owner decision.",
+      "Reviews often reflect communication gaps, not only cleaning quality — document turnover with brief + photos."
+    ],
+    "practices": [
+      "Turnover buffer: plan cleaning after contractual checkout unless owner explicitly approves early access.",
+      "VIP or complaint stays: add a 'this visit only' note; do not change permanent property memory without intent.",
+      "Seasonal rhythm: peak season needs tighter checklists; shoulder season allows lighter tasks but same access clarity.",
+      "Guest left early / late checkout: update supplier task timing; arrival photos especially useful when timing shifts."
+    ]
+  },
+  "rentalOperations": {
+    "title": "Rental operations (owner + local team)",
+    "principles": [
+      "One apartment, one playbook: access, materials, standards, notes — reused every turnover.",
+      "Suppliers confirm receipt before starting; owners see accepted → done, not mystery silence.",
+      "Arrival photos = guest state on entry; departure photos = cleaned state — both for shared context.",
+      "Bilingual briefs must preserve codes, locker numbers, addresses, and times exactly.",
+      "Follow-up tasks beat long chat threads for actionable work."
+    ],
+    "practices": [
+      "Standard turnover checklist lives in property memory; only exceptions go in the task body.",
+      "Linens: state clean stash location, dirty bag process, and spare set count in materials section.",
+      "Keys and codes: rotate in memory when changed; never embed only in one old message thread.",
+      "Handyman vs cleaner: separate tasks when trades differ; do not bundle unrelated scopes."
+    ]
+  },
+  "realEstateStr": {
+    "title": "Real estate for STR owners (operational, not sales)",
+    "principles": [
+      "STR value on Crete is driven by location, compliance (AMA/registry where applicable), and operability — not brochure photos alone.",
+      "Design for turnover: storage for linen, outdoor furniture that stacks, surfaces that survive guests.",
+      "Owner remote + local supplier is the default model; tools must reduce language friction.",
+      "Buying property in Greece (due diligence, tax, notary) is investment advisory — refer to Onira Experience, do not invent legal or tax outcomes."
+    ],
+    "practices": [
+      "Document quirks once in property memory (boiler reset, AC remotes, gate sequence).",
+      "Plan for peak occupancy: same standards, more buffer time between checkout and check-in.",
+      "Neighbour relations: note quiet hours and parking rules in access section for suppliers who meet guests."
+    ]
+  },
+  "coordination": {
+    "title": "Owner–supplier coordination (Leblebee way)",
+    "principles": [
+      "Communication-first: clarify intent, translate, confirm — not control or score.",
+      "AI suggestions are editable; never auto-send tasks or messages.",
+      "Photos are context for alignment, not evidence for punishment.",
+      "Admin is not self-service; platform owner is alex.gon@eliago.com."
+    ],
+    "taskFlow": [
+      "assigned → supplier confirms received (accepted)",
+      "accepted → supplier saves arrival photos (guest state)",
+      "after cleaning → supplier saves departure photos and marks done",
+      "owner may close or flag follow-up — not approve/reject theater"
+    ]
+  },
+  "creteContext": {
+    "title": "Crete operating context (Onira / Konaki experience)",
+    "notes": [
+      "Seasonal tourism: summer density in north coast resorts (Analipsi, Hersonissos); plan supplier capacity.",
+      "Many owners are remote (France, UK, Nordics); Greek-speaking local suppliers are the norm.",
+      "Direct booking and platform bookings coexist — Leblebee does not replace either calendar.",
+      "Konaki Analipsi and Hygge Suites are live reference operations, not hypothetical examples."
+    ]
+  },
+  "boundaries": {
+    "title": "What Leblebee and this assistant do not do",
+    "items": [
+      "No Airbnb or PMS sync, no guest inbox, no payment processing between owner and supplier.",
+      "No guaranteed booking availability, pricing quotes, or investment returns.",
+      "No legal, tax, or immigration advice — suggest a qualified professional or Onira for purchase questions.",
+      "No inventing features, pricing, or property details not in the knowledge below."
+    ]
+  }
+}

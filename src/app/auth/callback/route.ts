@@ -1,9 +1,16 @@
 import { getAppOrigin } from "@/lib/auth/app-origin";
+import { clearSupabaseAuthCookiesOnResponse } from "@/lib/auth/clear-auth-cookies";
 import { homePathForRole, isAdminEmail, type UserRole } from "@/lib/auth/roles";
 import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import type { EmailOtpType } from "@supabase/supabase-js";
+
+type PendingCookie = {
+  name: string;
+  value: string;
+  options: Parameters<NextResponse["cookies"]["set"]>[2];
+};
 
 export async function GET(request: Request) {
   const requestUrl = new URL(request.url);
@@ -23,6 +30,7 @@ export async function GET(request: Request) {
   }
 
   const cookieStore = await cookies();
+  const pendingCookies: PendingCookie[] = [];
 
   const supabase = createServerClient(supabaseUrl, supabaseAnonKey, {
     cookies: {
@@ -30,9 +38,10 @@ export async function GET(request: Request) {
         return cookieStore.getAll();
       },
       setAll(cookiesToSet) {
-        cookiesToSet.forEach(({ name, value, options }) =>
-          cookieStore.set(name, value, options),
-        );
+        cookiesToSet.forEach(({ name, value, options }) => {
+          cookieStore.set(name, value, options);
+          pendingCookies.push({ name, value, options });
+        });
       },
     },
   });
@@ -55,7 +64,12 @@ export async function GET(request: Request) {
   if (authError) {
     const login = new URL("/login", origin);
     login.searchParams.set("error", authError);
-    return NextResponse.redirect(login);
+    const response = NextResponse.redirect(login);
+    clearSupabaseAuthCookiesOnResponse(
+      response,
+      (await cookies()).getAll(),
+    );
+    return response;
   }
 
   const {
@@ -95,5 +109,9 @@ export async function GET(request: Request) {
       ? nextParam
       : fallback;
 
-  return NextResponse.redirect(new URL(next, origin));
+  const response = NextResponse.redirect(new URL(next, origin));
+  pendingCookies.forEach(({ name, value, options }) => {
+    response.cookies.set(name, value, options);
+  });
+  return response;
 }

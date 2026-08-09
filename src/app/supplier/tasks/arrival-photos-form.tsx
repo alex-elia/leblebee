@@ -2,16 +2,16 @@
 
 import { useActionState, useState } from "react";
 import {
-  completeTaskWithHandoff,
+  recordArrivalPhotos,
   type HandoffActionState,
 } from "./handoff-actions";
 import { Button, TextAreaField } from "@/components/ui";
 
 const initial: HandoffActionState = {};
 
-export function HandoffCompleteForm({ taskId }: { taskId: string }) {
+export function ArrivalPhotosForm({ taskId }: { taskId: string }) {
   const [state, action, pending] = useActionState(
-    completeTaskWithHandoff,
+    recordArrivalPhotos,
     initial,
   );
   const [count, setCount] = useState(0);
@@ -23,10 +23,10 @@ export function HandoffCompleteForm({ taskId }: { taskId: string }) {
     >
       <input type="hidden" name="task_id" value={taskId} />
       <div>
-        <h3 className="font-display text-xl text-ink">Departure photos</h3>
+        <h3 className="font-display text-xl text-ink">Arrival photos</h3>
         <p className="mt-1 text-sm text-ink-muted">
-          Before you leave, capture how the place looks after cleaning. The owner
-          sees arrival and departure together for shared context.
+          When you arrive, capture how the guest left the place. Shared context
+          for the owner, not surveillance.
         </p>
       </div>
       <label className="flex flex-col gap-1.5">
@@ -47,12 +47,12 @@ export function HandoffCompleteForm({ taskId }: { taskId: string }) {
       </label>
       <TextAreaField
         label="Short note (optional)"
-        name="completion_notes"
+        name="arrival_notes"
         rows={2}
-        placeholder="Terrace chairs stacked, linens in closet, keys on hook…"
+        placeholder="Guest checkout state, anything to flag before cleaning…"
       />
       <Button type="submit" disabled={pending || count < 1}>
-        {pending ? "Uploading…" : "Mark done with departure photos"}
+        {pending ? "Uploading…" : "Save arrival photos"}
       </Button>
       {state.error ? (
         <p className="text-sm font-semibold text-coral" role="alert">

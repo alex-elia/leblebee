@@ -1,0 +1,52 @@
+{
+  "items": [
+    {
+      "question": "What is Leblebee?",
+      "answer": "Leblebee is a bilingual ops channel for short-term rental owners and local suppliers in Greece (starting Crete). You assign tasks, Leblebee clarifies and translates briefs, suppliers confirm and send photos, owners see what happened — without a PMS or guest inbox."
+    },
+    {
+      "question": "Is Leblebee a PMS or channel manager?",
+      "answer": "No. It does not sync Airbnb, handle guest messaging, or take payments. It coordinates work between you and your cleaner, handyman, or local team — with property memory and AI-assisted translations."
+    },
+    {
+      "question": "How should I brief a cleaner before turnover?",
+      "answer": "Structure the brief in four blocks: (1) access and codes, (2) where materials and linen live, (3) standard work always done for this apartment, (4) this visit only extras. Leblebee property memory holds (1)-(3); each task adds (4). Ask the supplier for arrival photos (guest state) and departure photos (after cleaning)."
+    },
+    {
+      "question": "Why arrival and departure photos?",
+      "answer": "Arrival photos show how the guest left the place — context for the owner, not policing the supplier. Departure photos show the cleaned state. Together they prevent 'he said / she said' without surveillance or scoring."
+    },
+    {
+      "question": "How do I handle guest complaints about cleanliness remotely?",
+      "answer": "Ask for specifics (room, photo, time). Compare with the last turnover brief and departure photos. If something was missed, open a follow-up task with clear scope — not a blame message. Fix the process (checklist bullet, property memory), not only the person."
+    },
+    {
+      "question": "What belongs in property memory vs a single task?",
+      "answer": "Memory: access codes, parking, linen closet, standard turnover checklist, recurring quirks. Task: date-specific extras (extra bed, VIP welcome, broken item to check, guest checkout time change)."
+    },
+    {
+      "question": "My supplier speaks Greek only and I write in English. What works?",
+      "answer": "Write naturally in your language; Leblebee translates for the supplier view. Keep codes, names, and times verbatim. Short sections beat long paragraphs. Confirm critical access info in both languages once, then reuse property memory."
+    },
+    {
+      "question": "What about guest check-in and check-out times?",
+      "answer": "Leblebee does not replace your booking calendar. Operationally: align cleaner access with checkout time plus buffer; note early check-in or late checkout in 'this visit only'. Never promise guest times to suppliers without owner confirmation."
+    },
+    {
+      "question": "Does Alex operate rentals on Crete?",
+      "answer": "Yes — Konaki Analipsi (Analipsi) and Hygge Suites (Hersonissos). Leblebee is built from that operating experience. For investment advisory (buying property in Crete), that is Onira Experience — separate from Leblebee."
+    },
+    {
+      "question": "What languages does Leblebee support?",
+      "answer": "UI in English, French, and Greek. Task content is stored in your source language plus translations for suppliers. The landing assistant replies in the visitor's language when possible."
+    },
+    {
+      "question": "Is Leblebee free?",
+      "answer": "Free while we dogfood with a small Greece owner circle. Register as Client (owner) or Supplier (local provider) at leblebee.com/register."
+    },
+    {
+      "question": "Can Leblebee score or rank my cleaners?",
+      "answer": "No. Leblebee is communication-first. No reliability scores, no surveillance framing. Context and clear briefs beat grading people."
+    }
+  ]
+}

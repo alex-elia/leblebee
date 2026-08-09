@@ -1,14 +1,175 @@
 "use server";
 
+import { authCallbackUrl } from "@/lib/auth/app-origin";
 import { requireProfile } from "@/lib/auth/session";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
+export type TaskPhotoKind = "arrival" | "handoff";
+
 export type HandoffActionState = {
   error?: string;
   ok?: boolean;
 };
+
+export type TaskPhoto = {
+  id: string;
+  caption: string | null;
+  created_at: string;
+  url: string | null;
+};
+
+const MAX_PHOTOS = 6;
+const MAX_BYTES = 8 * 1024 * 1024;
+
+function revalidateTaskPaths(taskId: string) {
+  revalidatePath(`/supplier/tasks/${taskId}`);
+  revalidatePath(`/client/tasks/${taskId}`);
+  revalidatePath("/supplier");
+  revalidatePath("/client/tasks");
+}
+
+async function assertSupplierTaskAccess(
+  taskId: string,
+  profileRole: string,
+  userId: string,
+  supabase: Awaited<ReturnType<typeof requireProfile>>["supabase"],
+) {
+  const { data: task } = await supabase
+    .from("tasks")
+    .select("id, status, assigned_provider_id, providers!assigned_provider_id(user_id)")
+    .eq("id", taskId)
+    .maybeSingle();
+
+  if (!task) return { error: "Task not found." as const, task: null };
+
+  const provider = Array.isArray(task.providers)
+    ? task.providers[0]
+    : task.providers;
+
+  if (profileRole === "supplier" && provider?.user_id !== userId) {
+    return { error: "Not allowed." as const, task: null };
+  }
+
+  return { error: null, task };
+}
+
+async function uploadTaskPhotos(input: {
+  taskId: string;
+  files: File[];
+  kind: TaskPhotoKind;
+  notes: string;
+  userId: string;
+  supabase: Awaited<ReturnType<typeof requireProfile>>["supabase"];
+}): Promise<{ error?: string }> {
+  const files = input.files.slice(0, MAX_PHOTOS);
+
+  for (const file of files) {
+    if (!file.type.startsWith("image/")) {
+      return { error: "Only image files are allowed." };
+    }
+    if (file.size > MAX_BYTES) {
+      return { error: "Each photo must be under 8MB." };
+    }
+
+    const ext = file.name.split(".").pop()?.toLowerCase() || "jpg";
+    const path = `${input.taskId}/${input.userId}/${crypto.randomUUID()}.${ext}`;
+
+    const { error: uploadError } = await input.supabase.storage
+      .from("task-attachments")
+      .upload(path, file, {
+        contentType: file.type,
+        upsert: false,
+      });
+
+    if (uploadError) {
+      return { error: uploadError.message };
+    }
+
+    const { error: rowError } = await input.supabase
+      .from("task_attachments")
+      .insert({
+        task_id: input.taskId,
+        created_by: input.userId,
+        storage_path: path,
+        kind: input.kind,
+        caption: input.notes || null,
+      });
+
+    if (rowError) {
+      return { error: rowError.message };
+    }
+  }
+
+  return {};
+}
+
+export async function recordArrivalPhotos(
+  _prev: HandoffActionState,
+  formData: FormData,
+): Promise<HandoffActionState> {
+  const { user, profile, supabase } = await requireProfile([
+    "supplier",
+    "admin",
+  ]);
+
+  const taskId = String(formData.get("task_id") ?? "");
+  const notes = String(formData.get("arrival_notes") ?? "").trim();
+  const files = formData
+    .getAll("photos")
+    .filter((f): f is File => f instanceof File && f.size > 0);
+
+  if (!taskId) return { error: "Missing task." };
+  if (files.length < 1) {
+    return { error: "Add at least one arrival photo before continuing." };
+  }
+
+  const access = await assertSupplierTaskAccess(
+    taskId,
+    profile.role,
+    user.id,
+    supabase,
+  );
+  if (access.error || !access.task) return { error: access.error ?? "Task not found." };
+
+  if (access.task.status !== "accepted") {
+    return { error: "Confirm the task first, then add arrival photos." };
+  }
+
+  const { data: existing } = await supabase
+    .from("task_attachments")
+    .select("id")
+    .eq("task_id", taskId)
+    .eq("kind", "arrival")
+    .limit(1);
+
+  if (existing?.length) {
+    return { error: "Arrival photos were already saved for this task." };
+  }
+
+  const upload = await uploadTaskPhotos({
+    taskId,
+    files,
+    kind: "arrival",
+    notes,
+    userId: user.id,
+    supabase,
+  });
+  if (upload.error) return { error: upload.error };
+
+  await supabase.from("task_events").insert({
+    task_id: taskId,
+    actor_id: user.id,
+    event_type: "arrival_photos",
+    note: notes
+      ? `Arrival with ${files.length} photo(s): ${notes}`
+      : `Arrival with ${files.length} photo(s)`,
+  });
+
+  revalidateTaskPaths(taskId);
+  redirect(`/supplier/tasks/${taskId}`);
+}
 
 export async function completeTaskWithHandoff(
   _prev: HandoffActionState,
@@ -21,63 +182,47 @@ export async function completeTaskWithHandoff(
 
   const taskId = String(formData.get("task_id") ?? "");
   const notes = String(formData.get("completion_notes") ?? "").trim();
-  const files = formData.getAll("photos").filter((f): f is File => f instanceof File && f.size > 0);
+  const files = formData
+    .getAll("photos")
+    .filter((f): f is File => f instanceof File && f.size > 0);
 
   if (!taskId) return { error: "Missing task." };
   if (files.length < 1) {
-    return { error: "Add at least one handoff photo before marking done." };
+    return { error: "Add at least one departure photo before marking done." };
   }
 
-  const { data: task } = await supabase
-    .from("tasks")
-    .select("id, assigned_provider_id, providers!assigned_provider_id(user_id)")
-    .eq("id", taskId)
-    .maybeSingle();
+  const access = await assertSupplierTaskAccess(
+    taskId,
+    profile.role,
+    user.id,
+    supabase,
+  );
+  if (access.error || !access.task) return { error: access.error ?? "Task not found." };
 
-  if (!task) return { error: "Task not found." };
-
-  const provider = Array.isArray(task.providers)
-    ? task.providers[0]
-    : task.providers;
-
-  if (profile.role === "supplier" && provider?.user_id !== user.id) {
-    return { error: "Not allowed." };
+  if (access.task.status !== "accepted") {
+    return { error: "Task must be accepted before completion." };
   }
 
-  for (const file of files.slice(0, 6)) {
-    if (!file.type.startsWith("image/")) {
-      return { error: "Only image files are allowed." };
-    }
-    if (file.size > 8 * 1024 * 1024) {
-      return { error: "Each photo must be under 8MB." };
-    }
+  const { data: arrivalPhotos } = await supabase
+    .from("task_attachments")
+    .select("id")
+    .eq("task_id", taskId)
+    .eq("kind", "arrival")
+    .limit(1);
 
-    const ext = file.name.split(".").pop()?.toLowerCase() || "jpg";
-    const path = `${taskId}/${user.id}/${crypto.randomUUID()}.${ext}`;
-
-    const { error: uploadError } = await supabase.storage
-      .from("task-attachments")
-      .upload(path, file, {
-        contentType: file.type,
-        upsert: false,
-      });
-
-    if (uploadError) {
-      return { error: uploadError.message };
-    }
-
-    const { error: rowError } = await supabase.from("task_attachments").insert({
-      task_id: taskId,
-      created_by: user.id,
-      storage_path: path,
-      kind: "handoff",
-      caption: notes || null,
-    });
-
-    if (rowError) {
-      return { error: rowError.message };
-    }
+  if (!arrivalPhotos?.length) {
+    return { error: "Add arrival photos first, then departure photos." };
   }
+
+  const upload = await uploadTaskPhotos({
+    taskId,
+    files,
+    kind: "handoff",
+    notes,
+    userId: user.id,
+    supabase,
+  });
+  if (upload.error) return { error: upload.error };
 
   const { error: updateError } = await supabase
     .from("tasks")
@@ -100,10 +245,7 @@ export async function completeTaskWithHandoff(
       : `Completed with ${files.length} photo(s)`,
   });
 
-  revalidatePath(`/supplier/tasks/${taskId}`);
-  revalidatePath(`/client/tasks/${taskId}`);
-  revalidatePath("/supplier");
-  revalidatePath("/client/tasks");
+  revalidateTaskPaths(taskId);
   redirect(`/supplier/tasks/${taskId}`);
 }
 
@@ -125,9 +267,10 @@ export async function notifySupplierOfTask(input: {
       email: input.supplierEmail.toLowerCase(),
       options: {
         shouldCreateUser: false,
-        emailRedirectTo: `${origin}/auth/callback?next=${encodeURIComponent(
+        emailRedirectTo: authCallbackUrl(
+          origin,
           `/supplier/tasks/${input.taskId}`,
-        )}`,
+        ),
         data: {
           notify: "task_assigned",
           task_title: input.taskTitle,
@@ -139,7 +282,10 @@ export async function notifySupplierOfTask(input: {
   }
 }
 
-export async function getHandoffPhotoUrls(taskId: string) {
+export async function getTaskPhotoUrls(
+  taskId: string,
+  kind: TaskPhotoKind,
+): Promise<TaskPhoto[]> {
   const { supabase } = await requireProfile([
     "client",
     "supplier",
@@ -150,7 +296,7 @@ export async function getHandoffPhotoUrls(taskId: string) {
     .from("task_attachments")
     .select("id, storage_path, caption, created_at, kind")
     .eq("task_id", taskId)
-    .eq("kind", "handoff")
+    .eq("kind", kind)
     .order("created_at", { ascending: true });
 
   if (!rows?.length) return [];
@@ -170,4 +316,12 @@ export async function getHandoffPhotoUrls(taskId: string) {
     created_at: r.created_at,
     url: urlByPath.get(r.storage_path) ?? null,
   }));
+}
+
+export async function getHandoffPhotoUrls(taskId: string) {
+  return getTaskPhotoUrls(taskId, "handoff");
+}
+
+export async function getArrivalPhotoUrls(taskId: string) {
+  return getTaskPhotoUrls(taskId, "arrival");
 }

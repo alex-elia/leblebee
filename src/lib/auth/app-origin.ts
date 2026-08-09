@@ -37,6 +37,8 @@ export function isLocalDevOrigin(origin: string) {
 
 export function authCallbackUrl(origin: string, next?: string) {
   const url = new URL("/auth/callback", origin);
+  // Anchor query string so email templates can append &token_hash=...
+  url.searchParams.set("flow", "otp");
   if (next && next !== "/") {
     url.searchParams.set("next", next);
   }

@@ -1,5 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { clearSupabaseAuthCookiesOnResponse } from "@/lib/auth/clear-auth-cookies";
 import { homePathForRole, type UserRole } from "@/lib/auth/roles";
 
 export async function updateSession(request: NextRequest) {
@@ -29,7 +30,15 @@ export async function updateSession(request: NextRequest) {
 
   const {
     data: { user },
+    error: userError,
   } = await supabase.auth.getUser();
+
+  if (userError) {
+    clearSupabaseAuthCookiesOnResponse(
+      supabaseResponse,
+      request.cookies.getAll(),
+    );
+  }
 
   const path = request.nextUrl.pathname;
 
@@ -53,7 +62,7 @@ export async function updateSession(request: NextRequest) {
     path === "/favicon.ico";
 
   let role: UserRole | null = null;
-  if (user) {
+  if (user && !userError) {
     const { data: profile } = await supabase
       .from("profiles")
       .select("role")

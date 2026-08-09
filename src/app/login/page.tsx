@@ -1,4 +1,5 @@
 import { AppShell } from "@/components/ui/app-shell";
+import { clearSupabaseAuthCookies } from "@/lib/auth/clear-auth-cookies";
 import { SignInForm } from "./sign-in-form";
 import { getI18n } from "@/lib/i18n/get-locale";
 import type { Metadata } from "next";
@@ -17,6 +18,10 @@ export default async function LoginPage({
   const params = await searchParams;
   const nextPath =
     params.next && params.next.startsWith("/") ? params.next : "";
+
+  if (params.error) {
+    await clearSupabaseAuthCookies();
+  }
 
   return (
     <AppShell>
