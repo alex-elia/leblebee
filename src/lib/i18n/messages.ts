@@ -12,11 +12,164 @@ export type Messages = {
     myTasks: string;
     overview: string;
     designSystem: string;
+    users: string;
+    activity: string;
+    intros: string;
   };
   roles: {
     admin: string;
     client: string;
     supplier: string;
+  };
+  common: {
+    email: string;
+    emailPlaceholder: string;
+    sending: string;
+    due: string;
+    noDueDate: string;
+    noAccessNotes: string;
+    linked: string;
+    contactOnly: string;
+    invalidEmail: string;
+  };
+  auth: {
+    signInTitle: string;
+    signInSubtitle: string;
+    signInError: string;
+    magicLinkHint: string;
+    magicLinkButton: string;
+    magicLinkSent: string;
+    magicLinkSentLocal: string;
+    noAccount: string;
+    newHere: string;
+    createAccountLink: string;
+    registerTitle: string;
+    registerSubtitle: string;
+    displayName: string;
+    displayNamePlaceholder: string;
+    registerMagicHint: string;
+    personaLegend: string;
+    clientTitle: string;
+    clientDesc: string;
+    supplierTitle: string;
+    supplierDesc: string;
+    createAccountButton: string;
+    registerMagicSent: string;
+    registerMagicSentLocal: string;
+    adminEmailReserved: string;
+    choosePersona: string;
+    alreadyHaveAccount: string;
+  };
+  admin: {
+    title: string;
+    subtitle: string;
+    statClients: string;
+    statSuppliers: string;
+    statProperties: string;
+    openDesignSystem: string;
+    browseProperties: string;
+    users: {
+      title: string;
+      subtitle: string;
+      empty: string;
+      colName: string;
+      colEmail: string;
+      colRole: string;
+      colLanguage: string;
+      colJoined: string;
+      unnamed: string;
+      noEmail: string;
+    };
+    activity: {
+      title: string;
+      subtitle: string;
+      empty: string;
+      unknownTask: string;
+    };
+    intros: {
+      title: string;
+      subtitle: string;
+      clientLabel: string;
+      supplierLabel: string;
+      selectClient: string;
+      selectSupplier: string;
+      noteLabel: string;
+      noteHint: string;
+      notePlaceholder: string;
+      previewLabel: string;
+      copy: string;
+      copied: string;
+      emailBoth: string;
+      emailSubject: string;
+      needBothRoles: string;
+      unnamedClient: string;
+      unnamedSupplier: string;
+    };
+  };
+  client: {
+    home: {
+      titleHello: string;
+      subtitle: string;
+      statProperties: string;
+      statSuppliers: string;
+      statOpenTasks: string;
+      newTask: string;
+      addSupplier: string;
+      newProperty: string;
+      emptyTitle: string;
+      emptyDesc: string;
+    };
+    properties: {
+      title: string;
+      subtitle: string;
+      newProperty: string;
+      emptyTitle: string;
+      emptyDesc: string;
+    };
+    suppliers: {
+      title: string;
+      subtitle: string;
+      addSupplier: string;
+      emptyTitle: string;
+      emptyDesc: string;
+    };
+    tasks: {
+      title: string;
+      subtitle: string;
+      newTask: string;
+      emptyTitle: string;
+      emptyDesc: string;
+    };
+  };
+  supplier: {
+    home: {
+      title: string;
+      subtitle: string;
+      emptyTitle: string;
+      emptyDesc: string;
+    };
+  };
+  assistant: {
+    panelTitle: string;
+    panelSubtitle: string;
+    whatsapp: string;
+    startFree: string;
+    startHint: string;
+    ai: string;
+    back: string;
+    close: string;
+    phoneDisplay: string;
+    contactHint: string;
+    placeholder: string;
+    send: string;
+    thinking: string;
+    error: string;
+    offline: string;
+    greeting: string;
+    limitsNotice: string;
+    rateLimited: string;
+    turnLimit: string;
+    agentReports: string;
   };
   landing: {
     headline: string;
@@ -50,11 +203,175 @@ const en: Messages = {
     myTasks: "My tasks",
     overview: "Overview",
     designSystem: "Design system",
+    users: "Users",
+    activity: "Activity",
+    intros: "Intros",
   },
   roles: {
     admin: "Admin",
     client: "Client",
     supplier: "Supplier",
+  },
+  common: {
+    email: "Email",
+    emailPlaceholder: "you@example.com",
+    sending: "Sending…",
+    due: "Due {date}",
+    noDueDate: "No due date",
+    noAccessNotes: "No access notes",
+    linked: "Linked",
+    contactOnly: "Contact only",
+    invalidEmail: "Enter a valid email address.",
+  },
+  auth: {
+    signInTitle: "Sign in",
+    signInSubtitle:
+      "Existing accounts only. New clients and suppliers should register first.",
+    signInError: "Sign-in link expired or invalid. Request a new one",
+    magicLinkHint: "We'll email a one-time magic link. No password.",
+    magicLinkButton: "Email me a magic link",
+    magicLinkSent: "Check your email for the magic link.",
+    magicLinkSentLocal:
+      "Check Mailpit for the magic link (http://127.0.0.1:54324).",
+    noAccount: "No account for this email. Create one first.",
+    newHere: "New here?",
+    createAccountLink: "Create an account",
+    registerTitle: "Create account",
+    registerSubtitle:
+      "Choose Client or Supplier once. Admin access is separate and cannot be self-registered.",
+    displayName: "Display name",
+    displayNamePlaceholder: "Maria",
+    registerMagicHint: "We'll email a magic link to finish creating your account.",
+    personaLegend: "I am a…",
+    clientTitle: "Client",
+    clientDesc:
+      "Property owner — manage properties and send tasks to suppliers.",
+    supplierTitle: "Supplier",
+    supplierDesc:
+      "Local provider — receive tasks, leave handoff notes and photos.",
+    createAccountButton: "Create account",
+    registerMagicSent: "Account link sent. Check your email to finish registration.",
+    registerMagicSentLocal:
+      "Account link sent. Open Mailpit (http://127.0.0.1:54324) to finish registration.",
+    adminEmailReserved: "This email is reserved for admin. Use Sign in instead.",
+    choosePersona: "Choose whether you are a Client (property owner) or a Supplier.",
+    alreadyHaveAccount: "Already have an account?",
+  },
+  admin: {
+    title: "Admin",
+    subtitle: "Platform overview. Design system is available only here.",
+    statClients: "Clients",
+    statSuppliers: "Suppliers",
+    statProperties: "Properties",
+    openDesignSystem: "Open design system →",
+    browseProperties: "Browse properties →",
+    users: {
+      title: "Users",
+      subtitle: "All registered accounts across the platform.",
+      empty: "No users yet.",
+      colName: "Name",
+      colEmail: "Email",
+      colRole: "Role",
+      colLanguage: "Language",
+      colJoined: "Joined",
+      unnamed: "Unnamed",
+      noEmail: "No email",
+    },
+    activity: {
+      title: "Activity",
+      subtitle: "Recent task events across all clients.",
+      empty: "No activity yet.",
+      unknownTask: "Unknown task",
+    },
+    intros: {
+      title: "Intros",
+      subtitle:
+        "Draft a short introduction email between a client and supplier. Copy or send manually — nothing is saved.",
+      clientLabel: "Client",
+      supplierLabel: "Supplier",
+      selectClient: "Select a client…",
+      selectSupplier: "Select a supplier…",
+      noteLabel: "Context note (optional)",
+      noteHint: "Property, timing, or anything they should know upfront.",
+      notePlaceholder: "e.g. Studio in Plaka, turnover every Tuesday…",
+      previewLabel: "Preview",
+      copy: "Copy message",
+      copied: "Copied",
+      emailBoth: "Email both",
+      emailSubject: "Leblebee introduction",
+      needBothRoles: "Need at least one client and one supplier registered.",
+      unnamedClient: "Client",
+      unnamedSupplier: "Supplier",
+    },
+  },
+  client: {
+    home: {
+      titleHello: "Hello",
+      subtitle:
+        "Manage properties and suppliers. Send clear bilingual tasks — AI helps with language and clarity.",
+      statProperties: "Properties",
+      statSuppliers: "Suppliers",
+      statOpenTasks: "Open tasks",
+      newTask: "New task",
+      addSupplier: "Add supplier",
+      newProperty: "New property",
+      emptyTitle: "Add your first property",
+      emptyDesc: "Then add a supplier and send your first bilingual task.",
+    },
+    properties: {
+      title: "Properties",
+      subtitle: "Apartments you operate remotely — with notes suppliers need.",
+      newProperty: "New property",
+      emptyTitle: "No properties yet",
+      emptyDesc: "Add the first apartment so you can create tasks against it.",
+    },
+    suppliers: {
+      title: "Suppliers",
+      subtitle: "Local people you trust — we translate when you message them.",
+      addSupplier: "Add supplier",
+      emptyTitle: "No suppliers yet",
+      emptyDesc:
+        "Add your cleaner or handyman so you can send clear bilingual tasks.",
+    },
+    tasks: {
+      title: "Tasks",
+      subtitle: "Clear bilingual instructions — less back-and-forth.",
+      newTask: "New task",
+      emptyTitle: "No tasks yet",
+      emptyDesc: "Create a task for a supplier. AI helps clarify and translate.",
+    },
+  },
+  supplier: {
+    home: {
+      title: "My tasks",
+      subtitle:
+        "Instructions appear in your language. Reply anytime — we translate for the owner.",
+      emptyTitle: "No assigned tasks yet",
+      emptyDesc: "When an owner sends you work, it shows up here.",
+    },
+  },
+  assistant: {
+    panelTitle: "Questions?",
+    panelSubtitle: "Ask about Leblebee, get started, or reach Alex.",
+    whatsapp: "Email Alex",
+    startFree: "Start free",
+    startHint: "Register as owner or supplier. Magic link, no password.",
+    ai: "Ask Leblebee",
+    back: "Back",
+    close: "Close",
+    phoneDisplay: "Free · EN / FR / EL",
+    contactHint: "Email alex.gon@eliago.com for help beyond the assistant.",
+    placeholder: "Ask about owners, suppliers, tasks…",
+    send: "Send",
+    thinking: "Thinking…",
+    error: "Something went wrong. Try again or email Alex.",
+    offline: "Assistant is offline right now. Use Register or email Alex.",
+    greeting:
+      "Hi! I can explain how Leblebee helps owners and suppliers coordinate bilingual tasks. What would you like to know?",
+    limitsNotice: "Up to {max} messages per visit.",
+    rateLimited: "Too many messages. Please wait a bit or email Alex.",
+    turnLimit: "Message limit reached for this visit ({max}). Email Alex if you need more help.",
+    agentReports: "Agent reports →",
   },
   landing: {
     headline: "Easier rental management. Better stays. More return.",
@@ -109,11 +426,187 @@ const fr: Messages = {
     myTasks: "Mes tâches",
     overview: "Vue d’ensemble",
     designSystem: "Design system",
+    users: "Utilisateurs",
+    activity: "Activité",
+    intros: "Mises en relation",
   },
   roles: {
     admin: "Admin",
     client: "Client",
     supplier: "Prestataire",
+  },
+  common: {
+    email: "E-mail",
+    emailPlaceholder: "vous@exemple.com",
+    sending: "Envoi…",
+    due: "Échéance {date}",
+    noDueDate: "Pas de date limite",
+    noAccessNotes: "Pas de notes d’accès",
+    linked: "Lié",
+    contactOnly: "Contact seulement",
+    invalidEmail: "Entrez une adresse e-mail valide.",
+  },
+  auth: {
+    signInTitle: "Connexion",
+    signInSubtitle:
+      "Comptes existants uniquement. Les nouveaux clients et prestataires doivent d’abord s’inscrire.",
+    signInError: "Lien expiré ou invalide. Demandez-en un nouveau",
+    magicLinkHint: "Nous enverrons un lien magique unique. Pas de mot de passe.",
+    magicLinkButton: "Envoyer un lien magique",
+    magicLinkSent: "Consultez votre e-mail pour le lien magique.",
+    magicLinkSentLocal:
+      "Consultez Mailpit pour le lien magique (http://127.0.0.1:54324).",
+    noAccount: "Aucun compte pour cet e-mail. Créez-en un d’abord.",
+    newHere: "Nouveau ici ?",
+    createAccountLink: "Créer un compte",
+    registerTitle: "Créer un compte",
+    registerSubtitle:
+      "Choisissez Client ou Prestataire une fois. L’accès admin est séparé et ne peut pas s’auto-inscrire.",
+    displayName: "Nom affiché",
+    displayNamePlaceholder: "Maria",
+    registerMagicHint:
+      "Nous enverrons un lien magique pour finaliser la création du compte.",
+    personaLegend: "Je suis…",
+    clientTitle: "Client",
+    clientDesc:
+      "Propriétaire — gérez vos logements et envoyez des tâches aux prestataires.",
+    supplierTitle: "Prestataire",
+    supplierDesc:
+      "Prestataire local — recevez des tâches, laissez notes et photos de passation.",
+    createAccountButton: "Créer un compte",
+    registerMagicSent:
+      "Lien envoyé. Consultez votre e-mail pour finaliser l’inscription.",
+    registerMagicSentLocal:
+      "Lien envoyé. Ouvrez Mailpit (http://127.0.0.1:54324) pour finaliser l’inscription.",
+    adminEmailReserved:
+      "Cet e-mail est réservé à l’admin. Utilisez Connexion à la place.",
+    choosePersona:
+      "Choisissez si vous êtes Client (propriétaire) ou Prestataire.",
+    alreadyHaveAccount: "Vous avez déjà un compte ?",
+  },
+  admin: {
+    title: "Admin",
+    subtitle: "Vue plateforme. Le design system n’est disponible qu’ici.",
+    statClients: "Clients",
+    statSuppliers: "Prestataires",
+    statProperties: "Logements",
+    openDesignSystem: "Ouvrir le design system →",
+    browseProperties: "Parcourir les logements →",
+    users: {
+      title: "Utilisateurs",
+      subtitle: "Tous les comptes enregistrés sur la plateforme.",
+      empty: "Aucun utilisateur pour l’instant.",
+      colName: "Nom",
+      colEmail: "E-mail",
+      colRole: "Rôle",
+      colLanguage: "Langue",
+      colJoined: "Inscription",
+      unnamed: "Sans nom",
+      noEmail: "Pas d’e-mail",
+    },
+    activity: {
+      title: "Activité",
+      subtitle: "Événements récents sur toutes les tâches clients.",
+      empty: "Aucune activité pour l’instant.",
+      unknownTask: "Tâche inconnue",
+    },
+    intros: {
+      title: "Mises en relation",
+      subtitle:
+        "Rédigez un court e-mail d’introduction entre un client et un prestataire. Copiez ou envoyez manuellement — rien n’est enregistré.",
+      clientLabel: "Client",
+      supplierLabel: "Prestataire",
+      selectClient: "Choisir un client…",
+      selectSupplier: "Choisir un prestataire…",
+      noteLabel: "Note de contexte (optionnel)",
+      noteHint: "Logement, timing, ou ce qu’ils doivent savoir d’emblée.",
+      notePlaceholder: "ex. Studio à Plaka, turnover chaque mardi…",
+      previewLabel: "Aperçu",
+      copy: "Copier le message",
+      copied: "Copié",
+      emailBoth: "E-mail aux deux",
+      emailSubject: "Introduction Leblebee",
+      needBothRoles:
+        "Il faut au moins un client et un prestataire inscrits.",
+      unnamedClient: "Client",
+      unnamedSupplier: "Prestataire",
+    },
+  },
+  client: {
+    home: {
+      titleHello: "Bonjour",
+      subtitle:
+        "Gérez logements et prestataires. Envoyez des tâches bilingues claires — l’IA aide sur la langue et la clarté.",
+      statProperties: "Logements",
+      statSuppliers: "Prestataires",
+      statOpenTasks: "Tâches ouvertes",
+      newTask: "Nouvelle tâche",
+      addSupplier: "Ajouter un prestataire",
+      newProperty: "Nouveau logement",
+      emptyTitle: "Ajoutez votre premier logement",
+      emptyDesc:
+        "Puis ajoutez un prestataire et envoyez votre première tâche bilingue.",
+    },
+    properties: {
+      title: "Logements",
+      subtitle:
+        "Appartements gérés à distance — avec les notes dont les prestataires ont besoin.",
+      newProperty: "Nouveau logement",
+      emptyTitle: "Aucun logement pour l’instant",
+      emptyDesc:
+        "Ajoutez le premier appartement pour pouvoir créer des tâches.",
+    },
+    suppliers: {
+      title: "Prestataires",
+      subtitle:
+        "Personnes de confiance sur place — nous traduisons quand vous leur écrivez.",
+      addSupplier: "Ajouter un prestataire",
+      emptyTitle: "Aucun prestataire pour l’instant",
+      emptyDesc:
+        "Ajoutez votre femme de ménage ou bricoleur pour envoyer des tâches bilingues claires.",
+    },
+    tasks: {
+      title: "Tâches",
+      subtitle: "Consignes bilingues claires — moins d’allers-retours.",
+      newTask: "Nouvelle tâche",
+      emptyTitle: "Aucune tâche pour l’instant",
+      emptyDesc:
+        "Créez une tâche pour un prestataire. L’IA aide à clarifier et traduire.",
+    },
+  },
+  supplier: {
+    home: {
+      title: "Mes tâches",
+      subtitle:
+        "Les consignes apparaissent dans votre langue. Répondez quand vous voulez — nous traduisons pour le propriétaire.",
+      emptyTitle: "Aucune tâche assignée",
+      emptyDesc:
+        "Quand un propriétaire vous envoie du travail, cela apparaît ici.",
+    },
+  },
+  assistant: {
+    panelTitle: "Des questions ?",
+    panelSubtitle: "Demandez sur Leblebee, démarrez, ou contactez Alex.",
+    whatsapp: "E-mail Alex",
+    startFree: "Commencer gratuitement",
+    startHint: "Inscription propriétaire ou prestataire. Lien magique, sans mot de passe.",
+    ai: "Demander à Leblebee",
+    back: "Retour",
+    close: "Fermer",
+    phoneDisplay: "Gratuit · EN / FR / EL",
+    contactHint: "Écrivez à alex.gon@eliago.com au-delà de l’assistant.",
+    placeholder: "Propriétaires, prestataires, tâches…",
+    send: "Envoyer",
+    thinking: "Réflexion…",
+    error: "Un problème est survenu. Réessayez ou écrivez à Alex.",
+    offline: "Assistant hors ligne. Utilisez Inscription ou e-mail Alex.",
+    greeting:
+      "Bonjour ! Je peux expliquer comment Leblebee aide propriétaires et prestataires à coordonner des tâches bilingues. Que voulez-vous savoir ?",
+    limitsNotice: "Jusqu’à {max} messages par visite.",
+    rateLimited: "Trop de messages. Patientez ou écrivez à Alex.",
+    turnLimit:
+      "Limite de messages atteinte ({max}). Écrivez à Alex pour plus d’aide.",
+    agentReports: "Rapports agent →",
   },
   landing: {
     headline: "Gestion locative plus simple. Meilleurs séjours. Plus de rendement.",
@@ -168,11 +661,187 @@ const el: Messages = {
     myTasks: "Οι εργασίες μου",
     overview: "Επισκόπηση",
     designSystem: "Design system",
+    users: "Χρήστες",
+    activity: "Δραστηριότητα",
+    intros: "Συστάσεις",
   },
   roles: {
     admin: "Διαχειριστής",
     client: "Ιδιοκτήτης",
     supplier: "Συνεργάτης",
+  },
+  common: {
+    email: "E-mail",
+    emailPlaceholder: "you@example.com",
+    sending: "Αποστολή…",
+    due: "Προθεσμία {date}",
+    noDueDate: "Χωρίς προθεσμία",
+    noAccessNotes: "Χωρίς σημειώσεις πρόσβασης",
+    linked: "Συνδεδεμένος",
+    contactOnly: "Μόνο επαφή",
+    invalidEmail: "Εισάγετε έγκυρη διεύθυνση e-mail.",
+  },
+  auth: {
+    signInTitle: "Σύνδεση",
+    signInSubtitle:
+      "Μόνο υπάρχοντες λογαριασμοί. Νέοι ιδιοκτήτες και συνεργάτες πρέπει πρώτα να εγγραφούν.",
+    signInError: "Το link έληξε ή είναι άκυρο. Ζητήστε νέο",
+    magicLinkHint: "Θα στείλουμε one-time magic link. Χωρίς κωδικό.",
+    magicLinkButton: "Στείλτε magic link",
+    magicLinkSent: "Ελέγξτε το e-mail σας για το magic link.",
+    magicLinkSentLocal:
+      "Ελέγξτε το Mailpit για το magic link (http://127.0.0.1:54324).",
+    noAccount: "Δεν υπάρχει λογαριασμός για αυτό το e-mail. Δημιουργήστε πρώτα.",
+    newHere: "Νέος εδώ;",
+    createAccountLink: "Δημιουργία λογαριασμού",
+    registerTitle: "Δημιουργία λογαριασμού",
+    registerSubtitle:
+      "Επιλέξτε Ιδιοκτήτης ή Συνεργάτη μία φορά. Η πρόσβαση admin είναι ξεχωριστή.",
+    displayName: "Εμφανιζόμενο όνομα",
+    displayNamePlaceholder: "Maria",
+    registerMagicHint:
+      "Θα στείλουμε magic link για να ολοκληρώσετε τη δημιουργία λογαριασμού.",
+    personaLegend: "Είμαι…",
+    clientTitle: "Ιδιοκτήτης",
+    clientDesc:
+      "Ιδιοκτήτης — διαχειριστείτε καταλύματα και στείλτε εργασίες σε συνεργάτες.",
+    supplierTitle: "Συνεργάτης",
+    supplierDesc:
+      "Τοπικός συνεργάτης — λάβετε εργασίες, αφήστε σημειώσεις και φωτογραφίες.",
+    createAccountButton: "Δημιουργία λογαριασμού",
+    registerMagicSent:
+      "Στάλθηκε link. Ελέγξτε το e-mail για να ολοκληρώσετε την εγγραφή.",
+    registerMagicSentLocal:
+      "Στάλθηκε link. Ανοίξτε το Mailpit (http://127.0.0.1:54324) για την εγγραφή.",
+    adminEmailReserved:
+      "Αυτό το e-mail είναι για admin. Χρησιμοποιήστε Σύνδεση.",
+    choosePersona:
+      "Επιλέξτε αν είστε Ιδιοκτήτης ή Συνεργάτης.",
+    alreadyHaveAccount: "Έχετε ήδη λογαριασμό;",
+  },
+  admin: {
+    title: "Διαχείριση",
+    subtitle: "Επισκόπηση πλατφόρμας. Το design system είναι μόνο εδώ.",
+    statClients: "Ιδιοκτήτες",
+    statSuppliers: "Συνεργάτες",
+    statProperties: "Καταλύματα",
+    openDesignSystem: "Άνοιγμα design system →",
+    browseProperties: "Περιήγηση καταλυμάτων →",
+    users: {
+      title: "Χρήστες",
+      subtitle: "Όλοι οι εγγεγραμμένοι λογαριασμοί στην πλατφόρμα.",
+      empty: "Δεν υπάρχουν χρήστες ακόμα.",
+      colName: "Όνομα",
+      colEmail: "E-mail",
+      colRole: "Ρόλος",
+      colLanguage: "Γλώσσα",
+      colJoined: "Εγγραφή",
+      unnamed: "Χωρίς όνομα",
+      noEmail: "Χωρίς e-mail",
+    },
+    activity: {
+      title: "Δραστηριότητα",
+      subtitle: "Πρόσφατα events εργασιών από όλους τους ιδιοκτήτες.",
+      empty: "Δεν υπάρχει δραστηριότητα ακόμα.",
+      unknownTask: "Άγνωστη εργασία",
+    },
+    intros: {
+      title: "Συστάσεις",
+      subtitle:
+        "Σύνταξη σύντομου e-mail γνωριμίας μεταξύ ιδιοκτήτη και συνεργάτη. Αντιγραφή ή αποστολή χειροκίνητα — δεν αποθηκεύεται τίποτα.",
+      clientLabel: "Ιδιοκτήτης",
+      supplierLabel: "Συνεργάτης",
+      selectClient: "Επιλέξτε ιδιοκτήτη…",
+      selectSupplier: "Επιλέξτε συνεργάτη…",
+      noteLabel: "Σημείωση πλαισίου (προαιρετικό)",
+      noteHint: "Κατάλυμα, χρονοδιάγραμμα, ή ό,τι πρέπει να ξέρουν.",
+      notePlaceholder: "π.χ. Studio στο Plaka, turnover κάθε Τρίτη…",
+      previewLabel: "Προεπισκόπηση",
+      copy: "Αντιγραφή μηνύματος",
+      copied: "Αντιγράφηκε",
+      emailBoth: "E-mail και στους δύο",
+      emailSubject: "Σύσταση Leblebee",
+      needBothRoles:
+        "Χρειάζεται τουλάχιστον ένας ιδιοκτήτης και ένας συνεργάτης.",
+      unnamedClient: "Ιδιοκτήτης",
+      unnamedSupplier: "Συνεργάτης",
+    },
+  },
+  client: {
+    home: {
+      titleHello: "Γεια σας",
+      subtitle:
+        "Διαχειριστείτε καταλύματα και συνεργάτες. Στείλτε καθαρές δίγλωσσες εργασίες — η AI βοηθά στη γλώσσα και τη σαφήνεια.",
+      statProperties: "Καταλύματα",
+      statSuppliers: "Συνεργάτες",
+      statOpenTasks: "Ανοιχτές εργασίες",
+      newTask: "Νέα εργασία",
+      addSupplier: "Προσθήκη συνεργάτη",
+      newProperty: "Νέο κατάλυμα",
+      emptyTitle: "Προσθέστε το πρώτο κατάλυμα",
+      emptyDesc:
+        "Μετά προσθέστε συνεργάτη και στείλτε την πρώτη δίγλωσση εργασία.",
+    },
+    properties: {
+      title: "Καταλύματα",
+      subtitle:
+        "Διαμερίσματα που διαχειρίζεστε από μακριά — με σημειώσεις που χρειάζονται οι συνεργάτες.",
+      newProperty: "Νέο κατάλυμα",
+      emptyTitle: "Δεν υπάρχουν καταλύματα ακόμα",
+      emptyDesc:
+        "Προσθέστε το πρώτο διαμέρισμα για να δημιουργήσετε εργασίες.",
+    },
+    suppliers: {
+      title: "Συνεργάτες",
+      subtitle:
+        "Αξιόπιστοι τοπικοί — μεταφράζουμε όταν τους γράφετε.",
+      addSupplier: "Προσθήκη συνεργάτη",
+      emptyTitle: "Δεν υπάρχουν συνεργάτες ακόμα",
+      emptyDesc:
+        "Προσθέστε καθαρίστρια ή τεχνίτη για καθαρές δίγλωσσες εργασίες.",
+    },
+    tasks: {
+      title: "Εργασίες",
+      subtitle: "Καθαρές δίγλωσσες οδηγίες — λιγότερα μηνύματα.",
+      newTask: "Νέα εργασία",
+      emptyTitle: "Δεν υπάρχουν εργασίες ακόμα",
+      emptyDesc:
+        "Δημιουργήστε εργασία για συνεργάτη. Η AI βοηθά στη σαφήνεια και μετάφραση.",
+    },
+  },
+  supplier: {
+    home: {
+      title: "Οι εργασίες μου",
+      subtitle:
+        "Οι οδηγίες εμφανίζονται στη γλώσσα σας. Απαντήστε όποτε θέλετε — μεταφράζουμε για τον ιδιοκτήτη.",
+      emptyTitle: "Δεν υπάρχουν ανατεθειμένες εργασίες",
+      emptyDesc:
+        "Όταν ένας ιδιοκτήτης σας στείλει δουλειά, εμφανίζεται εδώ.",
+    },
+  },
+  assistant: {
+    panelTitle: "Ερωτήσεις;",
+    panelSubtitle: "Ρωτήστε για το Leblebee, ξεκινήστε, ή επικοινωνήστε με τον Alex.",
+    whatsapp: "E-mail στον Alex",
+    startFree: "Ξεκινήστε δωρεάν",
+    startHint: "Εγγραφή ως ιδιοκτήτης ή συνεργάτης. Magic link, χωρίς κωδικό.",
+    ai: "Ρωτήστε το Leblebee",
+    back: "Πίσω",
+    close: "Κλείσιμο",
+    phoneDisplay: "Δωρεάν · EN / FR / EL",
+    contactHint: "Γράψτε στο alex.gon@eliago.com πέρα από τον βοηθό.",
+    placeholder: "Ιδιοκτήτες, συνεργάτες, εργασίες…",
+    send: "Αποστολή",
+    thinking: "Σκέψη…",
+    error: "Κάτι πήγε στραβά. Δοκιμάστε ξανά ή γράψτε στον Alex.",
+    offline: "Ο βοηθός είναι εκτός. Χρησιμοποιήστε Εγγραφή ή e-mail Alex.",
+    greeting:
+      "Γεια! Μπορώ να εξηγήσω πώς το Leblebee βοηθά ιδιοκτήτες και συνεργάτες με δίγλωσσες εργασίες. Τι θέλετε να μάθετε;",
+    limitsNotice: "Έως {max} μηνύματα ανά επίσκεψη.",
+    rateLimited: "Πολλά μηνύματα. Περιμένετε ή γράψτε στον Alex.",
+    turnLimit:
+      "Φτάσατε το όριο μηνυμάτων ({max}). Γράψτε στον Alex για περισσότερη βοήθεια.",
+    agentReports: "Αναφορές agent →",
   },
   landing: {
     headline: "Πιο εύκολη διαχείριση. Καλύτερες διαμονές. Περισσότερη απόδοση.",
@@ -219,4 +888,14 @@ const catalog: Record<Locale, Messages> = { en, fr, el };
 
 export function getMessages(locale: Locale): Messages {
   return catalog[locale];
+}
+
+export function formatDueLabel(
+  dueAt: string | null,
+  locale: Locale,
+  t: Messages,
+): string {
+  if (!dueAt) return t.common.noDueDate;
+  const date = new Date(dueAt).toLocaleString(locale);
+  return t.common.due.replace("{date}", date);
 }

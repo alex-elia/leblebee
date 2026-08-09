@@ -70,3 +70,30 @@ Rollout uses replace-in-place (`maxSurge: 0`, `maxUnavailable: 1`) so deploys st
 `SUPABASE_DB_PASSWORD` is only needed for local CLI (`supabase link`, `db push`), not for production deploy.
 
 After bootstrap + GitHub secrets: push to `main` or run **Build and Deploy to Production**.
+
+## Platform admin
+
+Fixed admin account: **`alex.gon@eliago.com`** (see [`src/lib/auth/roles.ts`](../src/lib/auth/roles.ts) and migration `20260808100000_ensure_platform_admin.sql`).
+
+1. Open **https://www.leblebee.com/login** (do not use `/register` for this email).
+2. Request a magic link for `alex.gon@eliago.com` (first sign-in creates the auth account).
+3. Click the link in your email. You land on `/admin` with the admin role.
+
+If the role was wrong before migration `20260808100000`, Supabase GitHub integration applies it on next push. You can also run the migration SQL once in the Supabase SQL editor.
+
+Admin routes: `/admin`, `/admin/users`, `/admin/activity`, `/admin/intros`, `/admin/agent` (prompt reports).
+
+## Guest AI assistant (`elia-site-tools`)
+
+Landing page uses `@elia/agent-next` (`GuestAssistant` + `/api/chat`), same stack as Konaki/Onira.
+
+`preinstall` runs `scripts/ensure-elia-tools.mjs`:
+
+- Clones [github.com/alex-elia/elia-site-tools](https://github.com/alex-elia/elia-site-tools) (Docker/CI, fresh clones)
+- Or links a local checkout if present (`../elia-site-tools`, `../../source/repos/elia-site-tools`, or `ELIA_SITE_TOOLS_DIR`)
+
+Required for chat: `OVH_AI_ENDPOINTS_ACCESS_TOKEN` (already used by task companion).
+
+Optional telemetry/reports: `AGENT_DATABASE_URL`, `AGENT_ADMIN_SECRET`, `AGENT_REPORT_TO`, `RESEND_API_KEY`, `RESEND_FROM`.
+
+Build/dev use `--webpack` so `file:` packages resolve reliably.

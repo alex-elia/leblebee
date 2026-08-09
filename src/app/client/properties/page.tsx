@@ -1,15 +1,19 @@
 import { PersonaShell } from "@/components/ui/persona-shell";
 import { Button, EmptyState } from "@/components/ui";
 import { requireProfile } from "@/lib/auth/session";
+import { getI18n } from "@/lib/i18n/get-locale";
 import type { Metadata } from "next";
 import Link from "next/link";
 
-export const metadata: Metadata = {
-  title: "Properties",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { t } = await getI18n();
+  return { title: t.client.properties.title };
+}
 
 export default async function PropertiesPage() {
   const { user, profile, supabase } = await requireProfile(["client", "admin"]);
+  const { t } = await getI18n();
+  const P = t.client.properties;
 
   let query = supabase
     .from("properties")
@@ -27,25 +31,23 @@ export default async function PropertiesPage() {
       role={profile.role}
       displayName={profile.display_name}
       email={user.email}
-      title="Properties"
+      title={P.title}
     >
       <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="font-display text-4xl text-ink">Properties</h1>
-          <p className="mt-1 text-ink-muted">
-            Apartments you operate remotely — with notes suppliers need.
-          </p>
+          <h1 className="font-display text-4xl text-ink">{P.title}</h1>
+          <p className="mt-1 text-ink-muted">{P.subtitle}</p>
         </div>
         <Link href="/client/properties/new">
-          <Button>New property</Button>
+          <Button>{P.newProperty}</Button>
         </Link>
       </div>
 
       {!properties?.length ? (
         <EmptyState
-          title="No properties yet"
-          description="Add the first apartment so you can create tasks against it."
-          actionLabel="New property"
+          title={P.emptyTitle}
+          description={P.emptyDesc}
+          actionLabel={P.newProperty}
         />
       ) : (
         <ul className="divide-y divide-line border-t border-line">
@@ -61,7 +63,9 @@ export default async function PropertiesPage() {
                     {property.address_notes}
                   </p>
                 ) : (
-                  <p className="mt-0.5 text-sm text-ink-muted">No access notes</p>
+                  <p className="mt-0.5 text-sm text-ink-muted">
+                    {t.common.noAccessNotes}
+                  </p>
                 )}
               </Link>
             </li>

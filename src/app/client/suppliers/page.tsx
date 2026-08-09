@@ -1,15 +1,19 @@
 import { PersonaShell } from "@/components/ui/persona-shell";
 import { Button, EmptyState } from "@/components/ui";
 import { requireProfile } from "@/lib/auth/session";
+import { getI18n } from "@/lib/i18n/get-locale";
 import type { Metadata } from "next";
 import Link from "next/link";
 
-export const metadata: Metadata = {
-  title: "Suppliers",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { t } = await getI18n();
+  return { title: t.client.suppliers.title };
+}
 
 export default async function SuppliersPage() {
   const { user, profile, supabase } = await requireProfile(["client", "admin"]);
+  const { t } = await getI18n();
+  const S = t.client.suppliers;
 
   let query = supabase
     .from("providers")
@@ -27,24 +31,23 @@ export default async function SuppliersPage() {
       role={profile.role}
       displayName={profile.display_name}
       email={user.email}
+      title={S.title}
     >
       <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="font-display text-4xl text-ink">Suppliers</h1>
-          <p className="mt-1 text-ink-muted">
-            Local people you trust — we translate when you message them.
-          </p>
+          <h1 className="font-display text-4xl text-ink">{S.title}</h1>
+          <p className="mt-1 text-ink-muted">{S.subtitle}</p>
         </div>
         <Link href="/client/suppliers/new">
-          <Button>Add supplier</Button>
+          <Button>{S.addSupplier}</Button>
         </Link>
       </div>
 
       {!suppliers?.length ? (
         <EmptyState
-          title="No suppliers yet"
-          description="Add your cleaner or handyman so you can send clear bilingual tasks."
-          actionLabel="Add supplier"
+          title={S.emptyTitle}
+          description={S.emptyDesc}
+          actionLabel={S.addSupplier}
         />
       ) : (
         <ul className="divide-y divide-line border-t border-line">
@@ -67,11 +70,11 @@ export default async function SuppliersPage() {
                   </div>
                   {s.user_id ? (
                     <span className="rounded-full bg-olive-soft px-2 py-0.5 text-xs font-semibold text-olive">
-                      Linked
+                      {t.common.linked}
                     </span>
                   ) : (
                     <span className="rounded-full bg-sand-deep px-2 py-0.5 text-xs font-semibold text-ink-muted">
-                      Contact only
+                      {t.common.contactOnly}
                     </span>
                   )}
                 </div>

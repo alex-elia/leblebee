@@ -3,8 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --port 3010",
-    "build": "next build",
+    "preinstall": "node scripts/ensure-elia-tools.mjs",
+    "dev": "next dev --port 3010 --webpack",
+    "build": "next build --webpack",
     "start": "next start --port 3010",
     "lint": "eslint",
     "db:start": "supabase start",
@@ -14,8 +15,11 @@
     "auth:configure-email": "powershell -File scripts/configure-auth-email.ps1"
   },
   "dependencies": {
+    "@elia/agent-core": "file:./elia-site-tools/packages/agent-core",
+    "@elia/agent-next": "file:./elia-site-tools/packages/agent-next",
     "@supabase/ssr": "^0.12.4",
     "@supabase/supabase-js": "^2.111.0",
+    "lucide-react": "^1.17.0",
     "next": "16.2.12",
     "react": "19.2.4",
     "react-dom": "19.2.4"

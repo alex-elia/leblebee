@@ -23,6 +23,7 @@
 # misc
 .DS_Store
 *.pem
+elia-site-tools/
 
 # debug
 npm-debug.log*

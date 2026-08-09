@@ -15,6 +15,9 @@ function navForRole(role: UserRole, t: Messages): NavItem[] {
     case "admin":
       return [
         { href: "/admin", label: t.nav.overview },
+        { href: "/admin/users", label: t.nav.users },
+        { href: "/admin/activity", label: t.nav.activity },
+        { href: "/admin/intros", label: t.nav.intros },
         { href: "/client/properties", label: t.nav.properties },
         { href: "/client/suppliers", label: t.nav.suppliers },
         { href: "/client/tasks", label: t.nav.tasks },

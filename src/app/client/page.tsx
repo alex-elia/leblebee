@@ -1,15 +1,19 @@
 import { PersonaShell } from "@/components/ui/persona-shell";
 import { Button, EmptyState } from "@/components/ui";
 import { requireProfile } from "@/lib/auth/session";
+import { getI18n } from "@/lib/i18n/get-locale";
 import type { Metadata } from "next";
 import Link from "next/link";
 
-export const metadata: Metadata = {
-  title: "Client home",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { t } = await getI18n();
+  return { title: t.nav.home };
+}
 
 export default async function ClientHomePage() {
   const { user, profile, supabase } = await requireProfile(["client", "admin"]);
+  const { t } = await getI18n();
+  const H = t.client.home;
 
   const clientFilter = profile.role === "client" ? user.id : null;
 
@@ -43,36 +47,31 @@ export default async function ClientHomePage() {
       email={user.email}
     >
       <h1 className="font-display text-4xl text-ink">
-        Hello{profile.display_name ? `, ${profile.display_name}` : ""}
+        {H.titleHello}
+        {profile.display_name ? `, ${profile.display_name}` : ""}
       </h1>
-      <p className="mt-2 text-ink-muted">
-        Manage properties and suppliers. Send clear bilingual tasks — AI helps
-        with language and clarity.
-      </p>
+      <p className="mt-2 text-ink-muted">{H.subtitle}</p>
 
       <div className="mt-8 grid gap-3 sm:grid-cols-3">
-        <Stat label="Properties" value={propertyCount ?? 0} href="/client/properties" />
-        <Stat label="Suppliers" value={supplierCount ?? 0} href="/client/suppliers" />
-        <Stat label="Open tasks" value={taskCount ?? 0} href="/client/tasks" />
+        <Stat label={H.statProperties} value={propertyCount ?? 0} href="/client/properties" />
+        <Stat label={H.statSuppliers} value={supplierCount ?? 0} href="/client/suppliers" />
+        <Stat label={H.statOpenTasks} value={taskCount ?? 0} href="/client/tasks" />
       </div>
 
       <div className="mt-8 flex flex-wrap gap-3">
         <Link href="/client/tasks/new">
-          <Button>New task</Button>
+          <Button>{H.newTask}</Button>
         </Link>
         <Link href="/client/suppliers/new">
-          <Button variant="secondary">Add supplier</Button>
+          <Button variant="secondary">{H.addSupplier}</Button>
         </Link>
       </div>
 
       {(propertyCount ?? 0) === 0 ? (
         <div className="mt-8">
-          <EmptyState
-            title="Add your first property"
-            description="Then add a supplier and send your first bilingual task."
-          />
+          <EmptyState title={H.emptyTitle} description={H.emptyDesc} />
           <Link href="/client/properties/new" className="mt-2 inline-block">
-            <Button>New property</Button>
+            <Button>{H.newProperty}</Button>
           </Link>
         </div>
       ) : null}

@@ -1,14 +1,18 @@
 import { PersonaShell } from "@/components/ui/persona-shell";
 import { requireProfile } from "@/lib/auth/session";
+import { getI18n } from "@/lib/i18n/get-locale";
 import type { Metadata } from "next";
 import Link from "next/link";
 
-export const metadata: Metadata = {
-  title: "Admin",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { t } = await getI18n();
+  return { title: t.admin.title };
+}
 
 export default async function AdminHomePage() {
   const { user, profile, supabase } = await requireProfile(["admin"]);
+  const { t } = await getI18n();
+  const A = t.admin;
 
   const [{ count: clients }, { count: suppliers }, { count: properties }] =
     await Promise.all([
@@ -28,28 +32,31 @@ export default async function AdminHomePage() {
       role="admin"
       displayName={profile.display_name}
       email={user.email}
-      title="Admin"
+      title={A.title}
     >
-      <h1 className="font-display text-4xl text-ink">Admin</h1>
-      <p className="mt-2 text-ink-muted">
-        Platform overview. Design system is available only here.
-      </p>
+      <h1 className="font-display text-4xl text-ink">{A.title}</h1>
+      <p className="mt-2 text-ink-muted">{A.subtitle}</p>
 
       <div className="mt-8 grid gap-3 sm:grid-cols-3">
-        <Stat label="Clients" value={clients ?? 0} />
-        <Stat label="Suppliers" value={suppliers ?? 0} />
-        <Stat label="Properties" value={properties ?? 0} />
+        <Stat label={A.statClients} value={clients ?? 0} />
+        <Stat label={A.statSuppliers} value={suppliers ?? 0} />
+        <Stat label={A.statProperties} value={properties ?? 0} />
       </div>
 
       <ul className="mt-8 space-y-2 text-sm font-semibold">
         <li>
           <Link className="text-olive hover:underline" href="/design-system">
-            Open design system →
+            {A.openDesignSystem}
           </Link>
         </li>
         <li>
           <Link className="text-olive hover:underline" href="/client/properties">
-            Browse properties →
+            {A.browseProperties}
+          </Link>
+        </li>
+        <li>
+          <Link className="text-olive hover:underline" href="/admin/agent">
+            {t.assistant.agentReports}
           </Link>
         </li>
       </ul>

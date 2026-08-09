@@ -2,8 +2,10 @@
 
 import { authCallbackUrl } from "@/lib/auth/app-origin";
 import { magicLinkSentMessage } from "@/lib/auth/magic-link-messages";
+import { homePathForRole, isAdminEmail } from "@/lib/auth/roles";
 import { createClient } from "@/lib/supabase/client";
 import { Button, TextField } from "@/components/ui";
+import type { Messages } from "@/lib/i18n/messages";
 import Link from "next/link";
 import { useState, type FormEvent } from "react";
 
@@ -13,7 +15,17 @@ type FormState = {
   message?: string;
 };
 
-export function SignInForm({ nextPath }: { nextPath: string }) {
+export function SignInForm({
+  nextPath,
+  auth,
+  common,
+  nav,
+}: {
+  nextPath: string;
+  auth: Messages["auth"];
+  common: Messages["common"];
+  nav: Messages["nav"];
+}) {
   const [state, setState] = useState<FormState>({});
   const [pending, setPending] = useState(false);
 
@@ -28,18 +40,24 @@ export function SignInForm({ nextPath }: { nextPath: string }) {
       .toLowerCase();
 
     if (!email || !email.includes("@")) {
-      setState({ error: "Enter a valid email address." });
+      setState({ error: common.invalidEmail });
       setPending(false);
       return;
     }
 
     const origin = window.location.origin;
     const supabase = createClient();
+    const isAdmin = isAdminEmail(email);
     const { error } = await supabase.auth.signInWithOtp({
       email,
       options: {
-        emailRedirectTo: authCallbackUrl(origin, nextPath),
-        shouldCreateUser: false,
+        emailRedirectTo: authCallbackUrl(
+          origin,
+          isAdmin ? homePathForRole("admin") : nextPath,
+        ),
+        // Admin cannot self-register on /register; first sign-in must create auth user.
+        shouldCreateUser: isAdmin,
+        ...(isAdmin ? { data: { role: "admin" } } : {}),
       },
     });
 
@@ -48,13 +66,12 @@ export function SignInForm({ nextPath }: { nextPath: string }) {
     if (error) {
       const msg = error.message.toLowerCase();
       if (
-        msg.includes("signups not allowed") ||
-        msg.includes("user not found") ||
-        msg.includes("unable to validate")
+        !isAdmin &&
+        (msg.includes("signups not allowed") ||
+          msg.includes("user not found") ||
+          msg.includes("unable to validate"))
       ) {
-        setState({
-          error: "No account for this email. Create one first.",
-        });
+        setState({ error: auth.noAccount });
         return;
       }
       setState({ error: error.message });
@@ -63,30 +80,30 @@ export function SignInForm({ nextPath }: { nextPath: string }) {
 
     setState({
       ok: true,
-      message: magicLinkSentMessage(origin),
+      message: magicLinkSentMessage(origin, auth),
     });
   }
 
   return (
     <form onSubmit={handleSubmit} className="flex max-w-md flex-col gap-5">
       <TextField
-        label="Email"
+        label={common.email}
         name="email"
         type="email"
         autoComplete="email"
         required
-        placeholder="you@example.com"
-        hint="We’ll email a one-time magic link. No password."
+        placeholder={common.emailPlaceholder}
+        hint={auth.magicLinkHint}
       />
       <Button type="submit" disabled={pending}>
-        {pending ? "Sending…" : "Email me a magic link"}
+        {pending ? common.sending : auth.magicLinkButton}
       </Button>
       {state.error ? (
         <p className="text-sm font-semibold text-coral" role="alert">
           {state.error}{" "}
-          {state.error.includes("Create one") ? (
+          {state.error === auth.noAccount ? (
             <Link href="/register" className="underline">
-              Register
+              {nav.register}
             </Link>
           ) : null}
         </p>
@@ -97,9 +114,9 @@ export function SignInForm({ nextPath }: { nextPath: string }) {
         </p>
       ) : null}
       <p className="text-sm text-ink-muted">
-        New here?{" "}
+        {auth.newHere}{" "}
         <Link href="/register" className="font-semibold text-olive hover:underline">
-          Create an account
+          {auth.createAccountLink}
         </Link>
       </p>
     </form>

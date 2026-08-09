@@ -10,6 +10,7 @@ import {
 } from "@/lib/auth/roles";
 import { createClient } from "@/lib/supabase/client";
 import { Button, TextField } from "@/components/ui";
+import type { Messages } from "@/lib/i18n/messages";
 import Link from "next/link";
 import { useState, type FormEvent } from "react";
 
@@ -19,7 +20,15 @@ type FormState = {
   message?: string;
 };
 
-export function RegisterForm() {
+export function RegisterForm({
+  auth,
+  common,
+  nav,
+}: {
+  auth: Messages["auth"];
+  common: Messages["common"];
+  nav: Messages["nav"];
+}) {
   const [state, setState] = useState<FormState>({});
   const [pending, setPending] = useState(false);
   const [persona, setPersona] = useState<"client" | "supplier" | "">("");
@@ -40,23 +49,19 @@ export function RegisterForm() {
       .toLowerCase();
 
     if (!email || !email.includes("@")) {
-      setState({ error: "Enter a valid email address." });
+      setState({ error: common.invalidEmail });
       setPending(false);
       return;
     }
 
     if (isAdminEmail(email)) {
-      setState({
-        error: "This email is reserved for admin. Use Sign in instead.",
-      });
+      setState({ error: auth.adminEmailReserved });
       setPending(false);
       return;
     }
 
     if (!isRegistrableRole(personaValue)) {
-      setState({
-        error: "Choose whether you are a Client (property owner) or a Supplier.",
-      });
+      setState({ error: auth.choosePersona });
       setPending(false);
       return;
     }
@@ -85,30 +90,30 @@ export function RegisterForm() {
 
     setState({
       ok: true,
-      message: magicLinkSentMessage(origin, true),
+      message: magicLinkSentMessage(origin, auth, true),
     });
   }
 
   return (
     <form onSubmit={handleSubmit} className="flex max-w-md flex-col gap-5">
       <TextField
-        label="Display name"
+        label={auth.displayName}
         name="display_name"
         autoComplete="name"
-        placeholder="Maria"
+        placeholder={auth.displayNamePlaceholder}
       />
       <TextField
-        label="Email"
+        label={common.email}
         name="email"
         type="email"
         autoComplete="email"
         required
-        placeholder="you@example.com"
-        hint="We’ll email a magic link to finish creating your account."
+        placeholder={common.emailPlaceholder}
+        hint={auth.registerMagicHint}
       />
 
       <fieldset className="flex flex-col gap-2">
-        <legend className="text-sm font-semibold text-ink">I am a…</legend>
+        <legend className="text-sm font-semibold text-ink">{auth.personaLegend}</legend>
         <label className="flex cursor-pointer items-start gap-3 rounded-[var(--radius-sm)] border border-line bg-foam px-3 py-3 has-[:checked]:border-olive has-[:checked]:bg-olive-soft/40">
           <input
             type="radio"
@@ -120,10 +125,8 @@ export function RegisterForm() {
             required
           />
           <span>
-            <span className="block font-semibold text-ink">Client</span>
-            <span className="text-sm text-ink-muted">
-              Property owner — manage properties and send tasks to suppliers.
-            </span>
+            <span className="block font-semibold text-ink">{auth.clientTitle}</span>
+            <span className="text-sm text-ink-muted">{auth.clientDesc}</span>
           </span>
         </label>
         <label className="flex cursor-pointer items-start gap-3 rounded-[var(--radius-sm)] border border-line bg-foam px-3 py-3 has-[:checked]:border-olive has-[:checked]:bg-olive-soft/40">
@@ -137,23 +140,21 @@ export function RegisterForm() {
             required
           />
           <span>
-            <span className="block font-semibold text-ink">Supplier</span>
-            <span className="text-sm text-ink-muted">
-              Local provider — receive tasks, leave handoff notes and photos.
-            </span>
+            <span className="block font-semibold text-ink">{auth.supplierTitle}</span>
+            <span className="text-sm text-ink-muted">{auth.supplierDesc}</span>
           </span>
         </label>
       </fieldset>
 
       <Button type="submit" disabled={pending || !persona}>
-        {pending ? "Sending…" : "Create account"}
+        {pending ? common.sending : auth.createAccountButton}
       </Button>
       {state.error ? (
         <p className="text-sm font-semibold text-coral" role="alert">
           {state.error}{" "}
-          {state.error.includes("Sign in") ? (
+          {state.error === auth.adminEmailReserved ? (
             <Link href="/login" className="underline">
-              Sign in
+              {nav.signIn}
             </Link>
           ) : null}
         </p>
@@ -164,9 +165,9 @@ export function RegisterForm() {
         </p>
       ) : null}
       <p className="text-sm text-ink-muted">
-        Already have an account?{" "}
+        {auth.alreadyHaveAccount}{" "}
         <Link href="/login" className="font-semibold text-olive hover:underline">
-          Sign in
+          {nav.signIn}
         </Link>
       </p>
     </form>

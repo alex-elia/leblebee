@@ -1,12 +1,15 @@
 import { isLocalDevOrigin } from "@/lib/auth/app-origin";
+import type { Messages } from "@/lib/i18n/messages";
 
-export function magicLinkSentMessage(origin: string, forRegistration = false) {
+export function magicLinkSentMessage(
+  origin: string,
+  auth: Messages["auth"],
+  forRegistration = false,
+) {
   if (isLocalDevOrigin(origin)) {
     return forRegistration
-      ? "Account link sent. Open Mailpit (http://127.0.0.1:54324) to finish registration."
-      : "Check Mailpit for the magic link (http://127.0.0.1:54324).";
+      ? auth.registerMagicSentLocal
+      : auth.magicLinkSentLocal;
   }
-  return forRegistration
-    ? "Account link sent. Check your email to finish registration."
-    : "Check your email for the magic link.";
+  return forRegistration ? auth.registerMagicSent : auth.magicLinkSent;
 }
