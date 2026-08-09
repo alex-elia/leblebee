@@ -6,6 +6,7 @@ node_modules
 .env.local
 .env*.local
 *.md
+!content/**/*.md
 docs
 supabase/.branches
 supabase/.temp
