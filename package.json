@@ -7,7 +7,11 @@
     "dev": "next dev --port 3010 --webpack",
     "build": "next build --webpack",
     "start": "next start --port 3010",
-    "lint": "eslint",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "type-check": "tsc --noEmit",
+    "check": "npm run lint && npm run type-check",
+    "prepare": "husky || true",
     "db:start": "supabase start",
     "db:stop": "supabase stop",
     "db:reset": "supabase db reset",
@@ -31,7 +35,17 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.2.12",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.5.2",
     "tailwindcss": "^4",
     "typescript": "^5"
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "eslint --fix"
+    ],
+    "*.{js,jsx,mjs}": [
+      "eslint --fix"
+    ]
   }
 }

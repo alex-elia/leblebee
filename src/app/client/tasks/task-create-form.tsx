@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useEffect, useMemo, useState } from "react";
+import { useActionState, useMemo, useState } from "react";
 import {
   createAndAssignTask,
   previewTaskInstructions,
@@ -66,12 +66,14 @@ export function TaskCreateForm({
   );
   const preview = previewState.preview;
 
-  useEffect(() => {
+  const [prevPreview, setPrevPreview] = useState(preview);
+  if (preview !== prevPreview) {
+    setPrevPreview(preview);
     if (preview) {
       setTitle(preview.clarifiedTitle);
       setDescription(preview.clarifiedBody);
     }
-  }, [preview]);
+  }
 
   return (
     <div className="flex max-w-xl flex-col gap-8">

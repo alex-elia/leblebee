@@ -10,13 +10,7 @@ export type TaskMessageView = {
   is_mine: boolean;
 };
 
-export function MessageThread({
-  messages,
-  readerIsClient,
-}: {
-  messages: TaskMessageView[];
-  readerIsClient: boolean;
-}) {
+export function MessageThread({ messages }: { messages: TaskMessageView[] }) {
   if (messages.length === 0) {
     return <p className="text-sm text-ink-muted">No messages yet.</p>;
   }
