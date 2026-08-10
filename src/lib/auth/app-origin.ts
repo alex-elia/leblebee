@@ -26,6 +26,14 @@ export function getAppOrigin(request?: Request): string {
   return "http://localhost:3010";
 }
 
+/** Prefer configured public URL so auth emails always use www, not apex. */
+export function getClientAppOrigin(): string {
+  const configured = process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, "");
+  if (configured) return configured;
+  if (typeof window !== "undefined") return window.location.origin;
+  return "http://localhost:3010";
+}
+
 export function isLocalDevOrigin(origin: string) {
   try {
     const host = new URL(origin).hostname;

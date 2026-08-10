@@ -1,7 +1,7 @@
 "use client";
 
-import { authCallbackUrl } from "@/lib/auth/app-origin";
-import { magicLinkSentMessage } from "@/lib/auth/magic-link-messages";
+import { authCallbackUrl, getClientAppOrigin } from "@/lib/auth/app-origin";
+import { otpSentMessage } from "@/lib/auth/magic-link-messages";
 import {
   homePathForRole,
   isAdminEmail,
@@ -20,6 +20,8 @@ type FormState = {
   message?: string;
 };
 
+type Step = "details" | "code";
+
 export function RegisterForm({
   auth,
   common,
@@ -30,17 +32,40 @@ export function RegisterForm({
   nav: Messages["nav"];
 }) {
   const [state, setState] = useState<FormState>({});
+  const [step, setStep] = useState<Step>("details");
   const [pending, setPending] = useState(false);
   const [persona, setPersona] = useState<"client" | "supplier" | "">("");
+  const [email, setEmail] = useState("");
+  const [role, setRole] = useState<UserRole>("client");
 
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function sendCode(input: {
+    email: string;
+    role: UserRole;
+    displayName: string;
+  }) {
+    const origin = getClientAppOrigin();
+    const supabase = createClient();
+    return supabase.auth.signInWithOtp({
+      email: input.email,
+      options: {
+        emailRedirectTo: authCallbackUrl(origin, homePathForRole(input.role)),
+        data: {
+          role: input.role,
+          ...(input.displayName ? { display_name: input.displayName } : {}),
+        },
+        shouldCreateUser: true,
+      },
+    });
+  }
+
+  async function handleSend(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setPending(true);
     setState({});
 
     const form = event.currentTarget;
     const formData = new FormData(form);
-    const email = String(formData.get("email") ?? "")
+    const nextEmail = String(formData.get("email") ?? "")
       .trim()
       .toLowerCase();
     const displayName = String(formData.get("display_name") ?? "").trim();
@@ -48,13 +73,13 @@ export function RegisterForm({
       .trim()
       .toLowerCase();
 
-    if (!email || !email.includes("@")) {
+    if (!nextEmail || !nextEmail.includes("@")) {
       setState({ error: common.invalidEmail });
       setPending(false);
       return;
     }
 
-    if (isAdminEmail(email)) {
+    if (isAdminEmail(nextEmail)) {
       setState({ error: auth.adminEmailReserved });
       setPending(false);
       return;
@@ -66,21 +91,12 @@ export function RegisterForm({
       return;
     }
 
-    const role: UserRole = personaValue;
-    const origin = window.location.origin;
-    const supabase = createClient();
-    const { error } = await supabase.auth.signInWithOtp({
-      email,
-      options: {
-        emailRedirectTo: authCallbackUrl(origin, homePathForRole(role)),
-        data: {
-          role,
-          ...(displayName ? { display_name: displayName } : {}),
-        },
-        shouldCreateUser: true,
-      },
+    const nextRole: UserRole = personaValue;
+    const { error } = await sendCode({
+      email: nextEmail,
+      role: nextRole,
+      displayName,
     });
-
     setPending(false);
 
     if (error) {
@@ -88,14 +104,93 @@ export function RegisterForm({
       return;
     }
 
+    setEmail(nextEmail);
+    setRole(nextRole);
+    setStep("code");
     setState({
       ok: true,
-      message: magicLinkSentMessage(origin, auth, true),
+      message: otpSentMessage(getClientAppOrigin(), auth, true),
     });
   }
 
+  async function handleVerify(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setPending(true);
+    setState({});
+
+    const token = String(new FormData(event.currentTarget).get("otp") ?? "")
+      .trim()
+      .replace(/\s/g, "");
+
+    if (!token) {
+      setState({ error: auth.otpCodeRequired });
+      setPending(false);
+      return;
+    }
+
+    const supabase = createClient();
+    const { error } = await supabase.auth.verifyOtp({
+      email,
+      token,
+      type: "email",
+    });
+
+    if (error) {
+      setPending(false);
+      setState({ error: error.message });
+      return;
+    }
+
+    window.location.href = homePathForRole(role);
+  }
+
+  if (step === "code") {
+    return (
+      <div className="flex max-w-md flex-col gap-5">
+        {state.message ? (
+          <p className="rounded-[var(--radius-sm)] bg-olive-soft/60 px-3 py-2 text-sm text-olive">
+            {state.message}
+          </p>
+        ) : null}
+        <p className="text-sm text-ink-muted">
+          {auth.otpSentTo}{" "}
+          <span className="font-semibold text-ink">{email}</span>
+        </p>
+        <form onSubmit={handleVerify} className="flex flex-col gap-5">
+          <TextField
+            label={auth.otpCodeLabel}
+            name="otp"
+            inputMode="numeric"
+            autoComplete="one-time-code"
+            required
+            placeholder={auth.otpCodePlaceholder}
+            hint={auth.otpCodeHint}
+          />
+          <Button type="submit" disabled={pending}>
+            {pending ? common.sending : auth.registerOtpVerifyButton}
+          </Button>
+        </form>
+        <button
+          type="button"
+          className="text-left text-sm font-semibold text-olive hover:underline"
+          onClick={() => {
+            setStep("details");
+            setState({});
+          }}
+        >
+          {auth.otpChangeEmail}
+        </button>
+        {state.error ? (
+          <p className="text-sm font-semibold text-coral" role="alert">
+            {state.error}
+          </p>
+        ) : null}
+      </div>
+    );
+  }
+
   return (
-    <form onSubmit={handleSubmit} className="flex max-w-md flex-col gap-5">
+    <form onSubmit={handleSend} className="flex max-w-md flex-col gap-5">
       <TextField
         label={auth.displayName}
         name="display_name"
@@ -109,7 +204,7 @@ export function RegisterForm({
         autoComplete="email"
         required
         placeholder={common.emailPlaceholder}
-        hint={auth.registerMagicHint}
+        hint={auth.registerOtpHint}
       />
 
       <fieldset className="flex flex-col gap-2">
@@ -147,7 +242,7 @@ export function RegisterForm({
       </fieldset>
 
       <Button type="submit" disabled={pending || !persona}>
-        {pending ? common.sending : auth.createAccountButton}
+        {pending ? common.sending : auth.registerOtpSendButton}
       </Button>
       {state.error ? (
         <p className="text-sm font-semibold text-coral" role="alert">
@@ -157,11 +252,6 @@ export function RegisterForm({
               {nav.signIn}
             </Link>
           ) : null}
-        </p>
-      ) : null}
-      {state.message ? (
-        <p className="rounded-[var(--radius-sm)] bg-olive-soft/60 px-3 py-2 text-sm text-olive">
-          {state.message}
         </p>
       ) : null}
       <p className="text-sm text-ink-muted">

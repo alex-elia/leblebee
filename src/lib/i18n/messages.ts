@@ -36,6 +36,25 @@ export type Messages = {
     signInTitle: string;
     signInSubtitle: string;
     signInError: string;
+    otpHint: string;
+    otpSendButton: string;
+    otpSent: string;
+    otpSentLocal: string;
+    otpSentTo: string;
+    otpCodeLabel: string;
+    otpCodePlaceholder: string;
+    otpCodeHint: string;
+    otpCodeRequired: string;
+    otpVerifyButton: string;
+    otpResend: string;
+    otpChangeEmail: string;
+    resetSessionLink: string;
+    sessionResetDone: string;
+    registerOtpHint: string;
+    registerOtpSendButton: string;
+    registerOtpVerifyButton: string;
+    registerOtpSent: string;
+    registerOtpSentLocal: string;
     magicLinkHint: string;
     magicLinkButton: string;
     magicLinkSent: string;
@@ -226,8 +245,32 @@ const en: Messages = {
   auth: {
     signInTitle: "Sign in",
     signInSubtitle:
-      "Existing accounts only. New clients and suppliers should register first.",
-    signInError: "Sign-in link expired or invalid. Request a new one",
+      "Existing accounts only. Enter the 6-digit code from your email (recommended).",
+    signInError: "Sign-in failed. Request a new code or clear your session",
+    otpHint: "We email a 6-digit code. Enter it on the next step (no link click needed).",
+    otpSendButton: "Email me a sign-in code",
+    otpSent:
+      "Check your email for a 6-digit code. You can also use the link in the email.",
+    otpSentLocal:
+      "Check Mailpit for your code (http://127.0.0.1:54324).",
+    otpSentTo: "Code sent to",
+    otpCodeLabel: "Sign-in code",
+    otpCodePlaceholder: "123456",
+    otpCodeHint: "From your email. Expires in a few minutes.",
+    otpCodeRequired: "Enter the code from your email.",
+    otpVerifyButton: "Verify and sign in",
+    otpResend: "Send a new code",
+    otpChangeEmail: "Use a different email",
+    resetSessionLink: "Stuck signing in? Clear session",
+    sessionResetDone: "Session cleared. Request a new sign-in code below.",
+    registerOtpHint:
+      "We email a 6-digit code to finish creating your account.",
+    registerOtpSendButton: "Email me a registration code",
+    registerOtpVerifyButton: "Verify and finish registration",
+    registerOtpSent:
+      "Check your email for a 6-digit code to finish registration.",
+    registerOtpSentLocal:
+      "Check Mailpit for your code (http://127.0.0.1:54324).",
     magicLinkHint: "We'll email a one-time magic link. No password.",
     magicLinkButton: "Email me a magic link",
     magicLinkSent: "Check your email for the magic link.",
@@ -450,7 +493,32 @@ const fr: Messages = {
     signInTitle: "Connexion",
     signInSubtitle:
       "Comptes existants uniquement. Les nouveaux clients et prestataires doivent d’abord s’inscrire.",
-    signInError: "Lien expiré ou invalide. Demandez-en un nouveau",
+    signInError: "Échec de connexion. Demandez un nouveau code ou réinitialisez la session",
+    otpHint:
+      "Nous envoyons un code à 6 chiffres. Saisissez-le à l’étape suivante (sans cliquer sur un lien).",
+    otpSendButton: "Envoyer un code de connexion",
+    otpSent:
+      "Consultez votre e-mail pour un code à 6 chiffres. Vous pouvez aussi utiliser le lien dans l’e-mail.",
+    otpSentLocal:
+      "Consultez Mailpit pour votre code (http://127.0.0.1:54324).",
+    otpSentTo: "Code envoyé à",
+    otpCodeLabel: "Code de connexion",
+    otpCodePlaceholder: "123456",
+    otpCodeHint: "Indiqué dans votre e-mail. Expire dans quelques minutes.",
+    otpCodeRequired: "Entrez le code reçu par e-mail.",
+    otpVerifyButton: "Vérifier et se connecter",
+    otpResend: "Envoyer un nouveau code",
+    otpChangeEmail: "Utiliser une autre adresse",
+    resetSessionLink: "Blocage ? Réinitialiser la session",
+    sessionResetDone: "Session réinitialisée. Demandez un nouveau code ci-dessous.",
+    registerOtpHint:
+      "Nous envoyons un code à 6 chiffres pour finaliser la création du compte.",
+    registerOtpSendButton: "Envoyer un code d’inscription",
+    registerOtpVerifyButton: "Vérifier et terminer l’inscription",
+    registerOtpSent:
+      "Consultez votre e-mail pour un code à 6 chiffres afin de finaliser l’inscription.",
+    registerOtpSentLocal:
+      "Consultez Mailpit pour votre code (http://127.0.0.1:54324).",
     magicLinkHint: "Nous enverrons un lien magique unique. Pas de mot de passe.",
     magicLinkButton: "Envoyer un lien magique",
     magicLinkSent: "Consultez votre e-mail pour le lien magique.",
@@ -685,7 +753,32 @@ const el: Messages = {
     signInTitle: "Σύνδεση",
     signInSubtitle:
       "Μόνο υπάρχοντες λογαριασμοί. Νέοι ιδιοκτήτες και συνεργάτες πρέπει πρώτα να εγγραφούν.",
-    signInError: "Το link έληξε ή είναι άκυρο. Ζητήστε νέο",
+    signInError: "Η σύνδεση απέτυχε. Ζητήστε νέο κωδικό ή καθαρίστε τη συνεδρία",
+    otpHint:
+      "Στέλνουμε 6ψήφιο κωδικό. Εισάγετέ τον στο επόμενο βήμα (χωρίς link).",
+    otpSendButton: "Στείλτε κωδικό σύνδεσης",
+    otpSent:
+      "Ελέγξτε το e-mail για 6ψήφιο κωδικό. Μπορείτε επίσης να χρησιμοποιήσετε το link στο e-mail.",
+    otpSentLocal:
+      "Ελέγξτε το Mailpit για τον κωδικό (http://127.0.0.1:54324).",
+    otpSentTo: "Κωδικός στάλθηκε στο",
+    otpCodeLabel: "Κωδικός σύνδεσης",
+    otpCodePlaceholder: "123456",
+    otpCodeHint: "Από το e-mail σας. Λήγει σε λίγα λεπτά.",
+    otpCodeRequired: "Εισάγετε τον κωδικό από το e-mail.",
+    otpVerifyButton: "Επαλήθευση και σύνδεση",
+    otpResend: "Νέος κωδικός",
+    otpChangeEmail: "Άλλο e-mail",
+    resetSessionLink: "Κολλήσατε; Καθαρισμός συνεδρίας",
+    sessionResetDone: "Η συνεδρία καθαρίστηκε. Ζητήστε νέο κωδικό παρακάτω.",
+    registerOtpHint:
+      "Στέλνουμε 6ψήφιο κωδικό για να ολοκληρώσετε τη δημιουργία λογαριασμού.",
+    registerOtpSendButton: "Στείλτε κωδικό εγγραφής",
+    registerOtpVerifyButton: "Επαλήθευση και ολοκλήρωση εγγραφής",
+    registerOtpSent:
+      "Ελέγξτε το e-mail για 6ψήφιο κωδικό ολοκλήρωσης εγγραφής.",
+    registerOtpSentLocal:
+      "Ελέγξτε το Mailpit για τον κωδικό (http://127.0.0.1:54324).",
     magicLinkHint: "Θα στείλουμε one-time magic link. Χωρίς κωδικό.",
     magicLinkButton: "Στείλτε magic link",
     magicLinkSent: "Ελέγξτε το e-mail σας για το magic link.",

@@ -13,3 +13,14 @@ export function magicLinkSentMessage(
   }
   return forRegistration ? auth.registerMagicSent : auth.magicLinkSent;
 }
+
+export function otpSentMessage(
+  origin: string,
+  auth: Messages["auth"],
+  forRegistration = false,
+) {
+  if (isLocalDevOrigin(origin)) {
+    return forRegistration ? auth.registerOtpSentLocal : auth.otpSentLocal;
+  }
+  return forRegistration ? auth.registerOtpSent : auth.otpSent;
+}

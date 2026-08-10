@@ -32,8 +32,13 @@ export default async function LoginPage({
         </div>
         {params.error ? (
           <p className="text-sm font-semibold text-coral">
-            {t.auth.signInError}
-            {params.error !== "auth" ? ` (${params.error})` : ""}.
+            {params.error === "session_reset"
+              ? t.auth.sessionResetDone
+              : t.auth.signInError}
+            {params.error !== "auth" && params.error !== "session_reset"
+              ? ` (${params.error})`
+              : ""}
+            .
           </p>
         ) : null}
         <SignInForm nextPath={nextPath} auth={t.auth} common={t.common} nav={t.nav} />

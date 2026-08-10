@@ -13,8 +13,14 @@
             <tr>
               <td>
                 <p style="margin:0 0 8px;font-size:28px;letter-spacing:-0.02em;">Leblebee</p>
-                <p style="margin:0 0 20px;font-size:16px;line-height:1.5;color:#5c574e;">
-                  Use this one-time link to sign in. It expires soon and works only once.
+                <p style="margin:0 0 16px;font-size:16px;line-height:1.5;color:#5c574e;">
+                  Enter this code on the sign-in page (recommended). It expires soon.
+                </p>
+                <p style="margin:0 0 24px;font-family:Arial,sans-serif;font-size:32px;font-weight:700;letter-spacing:0.2em;color:#3f4f2f;">
+                  {{ .Token }}
+                </p>
+                <p style="margin:0 0 12px;font-size:14px;line-height:1.5;color:#5c574e;font-family:Arial,sans-serif;">
+                  Or open this one-time link (works in any browser):
                 </p>
                 <p style="margin:0 0 28px;">
                   <a href="{{ .RedirectTo }}&amp;token_hash={{ .TokenHash }}&amp;type=email" style="display:inline-block;background:#3f4f2f;color:#fffdf8;text-decoration:none;font-family:Arial,sans-serif;font-size:15px;font-weight:600;padding:12px 18px;border-radius:6px;">
