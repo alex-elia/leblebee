@@ -1,7 +1,22 @@
+import { publicRedirect } from "@/lib/auth/app-origin";
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { clearSupabaseAuthCookiesOnResponse } from "@/lib/auth/clear-auth-cookies";
 import { homePathForRole, type UserRole } from "@/lib/auth/roles";
+
+function redirectPublic(
+  request: NextRequest,
+  pathname: string,
+  search?: Record<string, string>,
+) {
+  const url = publicRedirect(pathname, request, search);
+  if (pathname === "/auth/callback") {
+    request.nextUrl.searchParams.forEach((value, key) => {
+      url.searchParams.set(key, value);
+    });
+  }
+  return NextResponse.redirect(url);
+}
 
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request });
@@ -47,9 +62,7 @@ export async function updateSession(request: NextRequest) {
     request.nextUrl.searchParams.has("code") &&
     !path.startsWith("/auth/callback")
   ) {
-    const url = request.nextUrl.clone();
-    url.pathname = "/auth/callback";
-    return NextResponse.redirect(url);
+    return redirectPublic(request, "/auth/callback");
   }
 
   const isPublic =
@@ -74,47 +87,31 @@ export async function updateSession(request: NextRequest) {
   // Design system: admin only
   if (path.startsWith("/design-system")) {
     if (!user) {
-      const url = request.nextUrl.clone();
-      url.pathname = "/login";
-      url.searchParams.set("next", path);
-      return NextResponse.redirect(url);
+      return redirectPublic(request, "/login", { next: path });
     }
     if (role !== "admin") {
-      const url = request.nextUrl.clone();
-      url.pathname = role ? homePathForRole(role) : "/login";
-      return NextResponse.redirect(url);
+      return redirectPublic(request, role ? homePathForRole(role) : "/login");
     }
     return supabaseResponse;
   }
 
   if (!isPublic && !user) {
-    const url = request.nextUrl.clone();
-    url.pathname = "/login";
-    url.searchParams.set("next", path);
-    return NextResponse.redirect(url);
+    return redirectPublic(request, "/login", { next: path });
   }
 
   if (user && role) {
     if (path === "/login" || path === "/register" || path === "/dashboard") {
-      const url = request.nextUrl.clone();
-      url.pathname = homePathForRole(role);
-      return NextResponse.redirect(url);
+      return redirectPublic(request, homePathForRole(role));
     }
 
     if (path.startsWith("/admin") && role !== "admin") {
-      const url = request.nextUrl.clone();
-      url.pathname = homePathForRole(role);
-      return NextResponse.redirect(url);
+      return redirectPublic(request, homePathForRole(role));
     }
     if (path.startsWith("/client") && role !== "client" && role !== "admin") {
-      const url = request.nextUrl.clone();
-      url.pathname = homePathForRole(role);
-      return NextResponse.redirect(url);
+      return redirectPublic(request, homePathForRole(role));
     }
     if (path.startsWith("/supplier") && role !== "supplier" && role !== "admin") {
-      const url = request.nextUrl.clone();
-      url.pathname = homePathForRole(role);
-      return NextResponse.redirect(url);
+      return redirectPublic(request, homePathForRole(role));
     }
   }
 
