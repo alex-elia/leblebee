@@ -1,7 +1,11 @@
 "use client";
 
 import { authCallbackUrl, getClientAppOrigin } from "@/lib/auth/app-origin";
-import { otpSentMessage } from "@/lib/auth/magic-link-messages";
+import { magicLinkSentMessage } from "@/lib/auth/magic-link-messages";
+import {
+  mapPasswordSignInError,
+  resolvePostLoginPath,
+} from "@/lib/auth/post-login";
 import { homePathForRole, isAdminEmail } from "@/lib/auth/roles";
 import { createClient } from "@/lib/supabase/client";
 import { Button, TextField } from "@/components/ui";
@@ -10,12 +14,11 @@ import Link from "next/link";
 import { useState, type FormEvent } from "react";
 
 type FormState = {
-  ok?: boolean;
   error?: string;
   message?: string;
 };
 
-type Step = "email" | "code";
+type SignInMode = "password" | "email_link";
 
 export function SignInForm({
   nextPath,
@@ -29,45 +32,108 @@ export function SignInForm({
   nav: Messages["nav"];
 }) {
   const [state, setState] = useState<FormState>({});
-  const [step, setStep] = useState<Step>("email");
-  const [email, setEmail] = useState("");
+  const [mode, setMode] = useState<SignInMode>("password");
   const [pending, setPending] = useState(false);
 
-  async function sendCode(targetEmail: string) {
-    const origin = getClientAppOrigin();
-    const supabase = createClient();
-    const isAdmin = isAdminEmail(targetEmail);
-    return supabase.auth.signInWithOtp({
-      email: targetEmail,
-      options: {
-        emailRedirectTo: authCallbackUrl(
-          origin,
-          isAdmin ? homePathForRole("admin") : nextPath,
-        ),
-        shouldCreateUser: isAdmin,
-        ...(isAdmin ? { data: { role: "admin" } } : {}),
-      },
-    });
-  }
-
-  async function handleSend(event: FormEvent<HTMLFormElement>) {
+  async function handlePasswordSignIn(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setPending(true);
     setState({});
 
-    const form = event.currentTarget;
-    const nextEmail = String(new FormData(form).get("email") ?? "")
+    const formData = new FormData(event.currentTarget);
+    const email = String(formData.get("email") ?? "")
       .trim()
       .toLowerCase();
+    const password = String(formData.get("password") ?? "");
 
-    if (!nextEmail || !nextEmail.includes("@")) {
+    if (!email || !email.includes("@")) {
       setState({ error: common.invalidEmail });
       setPending(false);
       return;
     }
 
-    const isAdmin = isAdminEmail(nextEmail);
-    const { error } = await sendCode(nextEmail);
+    if (!password) {
+      setState({ error: auth.passwordRequired });
+      setPending(false);
+      return;
+    }
+
+    const supabase = createClient();
+    const isAdmin = isAdminEmail(email);
+
+    let { error } = await supabase.auth.signInWithPassword({ email, password });
+
+    if (error && isAdmin) {
+      const msg = error.message.toLowerCase();
+      if (
+        msg.includes("invalid login credentials") ||
+        msg.includes("user not found")
+      ) {
+        const { error: signUpError } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            data: { role: "admin" },
+          },
+        });
+        if (!signUpError) {
+          ({ error } = await supabase.auth.signInWithPassword({
+            email,
+            password,
+          }));
+        } else {
+          error = signUpError;
+        }
+      }
+    }
+
+    setPending(false);
+
+    if (error) {
+      setState({
+        error: mapPasswordSignInError(error.message, auth.noAccount),
+      });
+      return;
+    }
+
+    const redirectTo = await resolvePostLoginPath(
+      supabase,
+      email,
+      isAdmin ? homePathForRole("admin") : nextPath,
+    );
+    window.location.href = redirectTo;
+  }
+
+  async function handleMagicLink(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setPending(true);
+    setState({});
+
+    const email = String(new FormData(event.currentTarget).get("email") ?? "")
+      .trim()
+      .toLowerCase();
+
+    if (!email || !email.includes("@")) {
+      setState({ error: common.invalidEmail });
+      setPending(false);
+      return;
+    }
+
+    const origin = getClientAppOrigin();
+    const supabase = createClient();
+    const isAdmin = isAdminEmail(email);
+    const { error } = await supabase.auth.signInWithOtp({
+      email,
+      options: {
+        emailRedirectTo: authCallbackUrl(
+          origin,
+          isAdmin ? homePathForRole("admin") : nextPath || "/dashboard",
+        ),
+        shouldCreateUser: isAdmin,
+        ...(isAdmin ? { data: { role: "admin" } } : {}),
+      },
+    });
+
     setPending(false);
 
     if (error) {
@@ -85,132 +151,91 @@ export function SignInForm({
       return;
     }
 
-    setEmail(nextEmail);
-    setStep("code");
     setState({
-      ok: true,
-      message: otpSentMessage(getClientAppOrigin(), auth),
+      message: magicLinkSentMessage(origin, auth),
     });
-  }
-
-  async function handleVerify(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setPending(true);
-    setState({});
-
-    const token = String(new FormData(event.currentTarget).get("otp") ?? "")
-      .trim()
-      .replace(/\s/g, "");
-
-    if (!token) {
-      setState({ error: auth.otpCodeRequired });
-      setPending(false);
-      return;
-    }
-
-    const supabase = createClient();
-    const { error } = await supabase.auth.verifyOtp({
-      email,
-      token,
-      type: "email",
-    });
-
-    if (error) {
-      setPending(false);
-      setState({ error: error.message });
-      return;
-    }
-
-    const redirectTo =
-      nextPath ||
-      (isAdminEmail(email) ? homePathForRole("admin") : "/dashboard");
-    window.location.href = redirectTo;
-  }
-
-  async function handleResend() {
-    setPending(true);
-    setState({});
-    const { error } = await sendCode(email);
-    setPending(false);
-    if (error) {
-      setState({ error: error.message });
-      return;
-    }
-    setState({
-      ok: true,
-      message: otpSentMessage(getClientAppOrigin(), auth),
-    });
-  }
-
-  if (step === "code") {
-    return (
-      <div className="flex max-w-md flex-col gap-5">
-        {state.message ? (
-          <p className="rounded-[var(--radius-sm)] bg-olive-soft/60 px-3 py-2 text-sm text-olive">
-            {state.message}
-          </p>
-        ) : null}
-        <p className="text-sm text-ink-muted">
-          {auth.otpSentTo}{" "}
-          <span className="font-semibold text-ink">{email}</span>
-        </p>
-        <form onSubmit={handleVerify} className="flex flex-col gap-5">
-          <TextField
-            label={auth.otpCodeLabel}
-            name="otp"
-            inputMode="numeric"
-            autoComplete="one-time-code"
-            required
-            placeholder={auth.otpCodePlaceholder}
-            hint={auth.otpCodeHint}
-          />
-          <Button type="submit" disabled={pending}>
-            {pending ? common.sending : auth.otpVerifyButton}
-          </Button>
-        </form>
-        <div className="flex flex-wrap gap-3 text-sm">
-          <button
-            type="button"
-            className="font-semibold text-olive hover:underline"
-            onClick={() => void handleResend()}
-            disabled={pending}
-          >
-            {auth.otpResend}
-          </button>
-          <button
-            type="button"
-            className="text-ink-muted hover:text-ink"
-            onClick={() => {
-              setStep("email");
-              setState({});
-            }}
-          >
-            {auth.otpChangeEmail}
-          </button>
-        </div>
-        {state.error ? (
-          <p className="text-sm font-semibold text-coral" role="alert">
-            {state.error}
-          </p>
-        ) : null}
-      </div>
-    );
   }
 
   return (
-    <form onSubmit={handleSend} className="flex max-w-md flex-col gap-5">
-      <TextField
-        label={common.email}
-        name="email"
-        type="email"
-        autoComplete="email"
-        required
-        placeholder={common.emailPlaceholder}
-        hint={auth.otpHint}
-      />
-      <Button type="submit" disabled={pending}>
-        {pending ? common.sending : auth.otpSendButton}
-      </Button>
+    <div className="flex max-w-md flex-col gap-5">
+      <div className="flex gap-2 rounded-[var(--radius-sm)] border border-line bg-sand-deep p-1">
+        <button
+          type="button"
+          className={`flex-1 rounded-[var(--radius-sm)] px-3 py-2 text-sm font-semibold ${
+            mode === "password"
+              ? "bg-foam text-ink shadow-sm"
+              : "text-ink-muted hover:text-ink"
+          }`}
+          onClick={() => {
+            setMode("password");
+            setState({});
+          }}
+        >
+          {auth.passwordTab}
+        </button>
+        <button
+          type="button"
+          className={`flex-1 rounded-[var(--radius-sm)] px-3 py-2 text-sm font-semibold ${
+            mode === "email_link"
+              ? "bg-foam text-ink shadow-sm"
+              : "text-ink-muted hover:text-ink"
+          }`}
+          onClick={() => {
+            setMode("email_link");
+            setState({});
+          }}
+        >
+          {auth.emailLinkTab}
+        </button>
+      </div>
+
+      {mode === "password" ? (
+        <form onSubmit={handlePasswordSignIn} className="flex flex-col gap-5">
+          <TextField
+            label={common.email}
+            name="email"
+            type="email"
+            autoComplete="email"
+            required
+            placeholder={common.emailPlaceholder}
+          />
+          <TextField
+            label={auth.passwordLabel}
+            name="password"
+            type="password"
+            autoComplete="current-password"
+            required
+            placeholder={auth.passwordPlaceholder}
+          />
+          <Button type="submit" disabled={pending}>
+            {pending ? common.sending : auth.passwordSignInButton}
+          </Button>
+          <p className="text-sm">
+            <Link
+              href="/login/forgot"
+              className="font-semibold text-olive hover:underline"
+            >
+              {auth.forgotPasswordLink}
+            </Link>
+          </p>
+        </form>
+      ) : (
+        <form onSubmit={handleMagicLink} className="flex flex-col gap-5">
+          <TextField
+            label={common.email}
+            name="email"
+            type="email"
+            autoComplete="email"
+            required
+            placeholder={common.emailPlaceholder}
+            hint={auth.magicLinkSameBrowserHint}
+          />
+          <Button type="submit" disabled={pending}>
+            {pending ? common.sending : auth.magicLinkButton}
+          </Button>
+        </form>
+      )}
+
       {state.error ? (
         <p className="text-sm font-semibold text-coral" role="alert">
           {state.error}{" "}
@@ -219,6 +244,11 @@ export function SignInForm({
               {nav.register}
             </Link>
           ) : null}
+        </p>
+      ) : null}
+      {state.message ? (
+        <p className="rounded-[var(--radius-sm)] bg-olive-soft/60 px-3 py-2 text-sm text-olive">
+          {state.message}
         </p>
       ) : null}
       <p className="text-sm text-ink-muted">
@@ -232,6 +262,6 @@ export function SignInForm({
           {auth.resetSessionLink}
         </Link>
       </p>
-    </form>
+    </div>
   );
 }

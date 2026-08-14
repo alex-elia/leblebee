@@ -36,29 +36,32 @@ export type Messages = {
     signInTitle: string;
     signInSubtitle: string;
     signInError: string;
-    otpHint: string;
-    otpSendButton: string;
-    otpSent: string;
-    otpSentLocal: string;
-    otpSentTo: string;
-    otpCodeLabel: string;
-    otpCodePlaceholder: string;
-    otpCodeHint: string;
-    otpCodeRequired: string;
-    otpVerifyButton: string;
-    otpResend: string;
-    otpChangeEmail: string;
-    resetSessionLink: string;
-    sessionResetDone: string;
-    registerOtpHint: string;
-    registerOtpSendButton: string;
-    registerOtpVerifyButton: string;
-    registerOtpSent: string;
-    registerOtpSentLocal: string;
-    magicLinkHint: string;
+    passwordTab: string;
+    emailLinkTab: string;
+    passwordLabel: string;
+    passwordPlaceholder: string;
+    passwordRequired: string;
+    passwordTooShort: string;
+    passwordSignInButton: string;
+    registerPasswordHint: string;
+    registerConfirmEmail: string;
+    newPasswordLabel: string;
+    resetPasswordButton: string;
+    resetPasswordTitle: string;
+    resetPasswordSubtitle: string;
+    forgotPasswordLink: string;
+    forgotPasswordTitle: string;
+    forgotPasswordSubtitle: string;
+    forgotPasswordHint: string;
+    forgotPasswordButton: string;
+    forgotPasswordSent: string;
+    backToSignIn: string;
+    magicLinkSameBrowserHint: string;
     magicLinkButton: string;
     magicLinkSent: string;
     magicLinkSentLocal: string;
+    resetSessionLink: string;
+    sessionResetDone: string;
     noAccount: string;
     newHere: string;
     createAccountLink: string;
@@ -66,15 +69,12 @@ export type Messages = {
     registerSubtitle: string;
     displayName: string;
     displayNamePlaceholder: string;
-    registerMagicHint: string;
     personaLegend: string;
     clientTitle: string;
     clientDesc: string;
     supplierTitle: string;
     supplierDesc: string;
     createAccountButton: string;
-    registerMagicSent: string;
-    registerMagicSentLocal: string;
     adminEmailReserved: string;
     choosePersona: string;
     alreadyHaveAccount: string;
@@ -245,46 +245,46 @@ const en: Messages = {
   auth: {
     signInTitle: "Sign in",
     signInSubtitle:
-      "Existing accounts only. Enter the 6-digit code from your email (recommended).",
-    signInError: "Sign-in failed. Request a new code or clear your session",
-    otpHint: "We email a 6-digit code. Enter it on the next step (no link click needed).",
-    otpSendButton: "Email me a sign-in code",
-    otpSent:
-      "Check your email for a 6-digit code. You can also use the link in the email.",
-    otpSentLocal:
-      "Check Mailpit for your code (http://127.0.0.1:54324).",
-    otpSentTo: "Code sent to",
-    otpCodeLabel: "Sign-in code",
-    otpCodePlaceholder: "123456",
-    otpCodeHint: "From your email. Expires in a few minutes.",
-    otpCodeRequired: "Enter the code from your email.",
-    otpVerifyButton: "Verify and sign in",
-    otpResend: "Send a new code",
-    otpChangeEmail: "Use a different email",
-    resetSessionLink: "Stuck signing in? Clear session",
-    sessionResetDone: "Session cleared. Request a new sign-in code below.",
-    registerOtpHint:
-      "We email a 6-digit code to finish creating your account.",
-    registerOtpSendButton: "Email me a registration code",
-    registerOtpVerifyButton: "Verify and finish registration",
-    registerOtpSent:
-      "Check your email for a 6-digit code to finish registration.",
-    registerOtpSentLocal:
-      "Check Mailpit for your code (http://127.0.0.1:54324).",
-    magicLinkHint: "We'll email a one-time magic link. No password.",
-    magicLinkButton: "Email me a magic link",
-    magicLinkSent: "Check your email for the magic link.",
+      "Use your email and password. Email link is optional (open it in this same browser).",
+    signInError: "Sign-in failed. Check your details or clear your session",
+    passwordTab: "Password",
+    emailLinkTab: "Email link",
+    passwordLabel: "Password",
+    passwordPlaceholder: "At least 6 characters",
+    passwordRequired: "Enter your password.",
+    passwordTooShort: "Password must be at least 6 characters.",
+    passwordSignInButton: "Sign in",
+    registerPasswordHint: "At least 6 characters. No email needed on each visit after this.",
+    registerConfirmEmail:
+      "Account created. If email confirmation is required, check your inbox once, then sign in with your password.",
+    newPasswordLabel: "New password",
+    resetPasswordButton: "Update password",
+    resetPasswordTitle: "Set a new password",
+    resetPasswordSubtitle: "Choose a new password for your account.",
+    forgotPasswordLink: "Forgot password?",
+    forgotPasswordTitle: "Reset password",
+    forgotPasswordSubtitle: "We email a reset link (uses one email).",
+    forgotPasswordHint: "Uses your Supabase account email.",
+    forgotPasswordButton: "Email reset link",
+    forgotPasswordSent: "If that account exists, a reset link was sent.",
+    backToSignIn: "Back to sign in",
+    magicLinkSameBrowserHint:
+      "Uses one email. Open the link in this same browser (not the mail app browser).",
+    magicLinkButton: "Email me a sign-in link",
+    magicLinkSent:
+      "Link sent. Open it in this same browser tab or window (not from the mail app).",
     magicLinkSentLocal:
-      "Check Mailpit for the magic link (http://127.0.0.1:54324).",
+      "Link sent. Open Mailpit (http://127.0.0.1:54324) in this browser.",
+    resetSessionLink: "Stuck signing in? Clear session",
+    sessionResetDone: "Session cleared. Sign in below.",
     noAccount: "No account for this email. Create one first.",
     newHere: "New here?",
     createAccountLink: "Create an account",
     registerTitle: "Create account",
     registerSubtitle:
-      "Choose Client or Supplier once. Admin access is separate and cannot be self-registered.",
+      "Email and password. Choose Client or Supplier once. Admin access is separate.",
     displayName: "Display name",
     displayNamePlaceholder: "Maria",
-    registerMagicHint: "We'll email a magic link to finish creating your account.",
     personaLegend: "I am a…",
     clientTitle: "Client",
     clientDesc:
@@ -293,9 +293,6 @@ const en: Messages = {
     supplierDesc:
       "Local provider — receive tasks, leave handoff notes and photos.",
     createAccountButton: "Create account",
-    registerMagicSent: "Account link sent. Check your email to finish registration.",
-    registerMagicSentLocal:
-      "Account link sent. Open Mailpit (http://127.0.0.1:54324) to finish registration.",
     adminEmailReserved: "This email is reserved for admin. Use Sign in instead.",
     choosePersona: "Choose whether you are a Client (property owner) or a Supplier.",
     alreadyHaveAccount: "Already have an account?",
@@ -492,48 +489,46 @@ const fr: Messages = {
   auth: {
     signInTitle: "Connexion",
     signInSubtitle:
-      "Comptes existants uniquement. Les nouveaux clients et prestataires doivent d’abord s’inscrire.",
-    signInError: "Échec de connexion. Demandez un nouveau code ou réinitialisez la session",
-    otpHint:
-      "Nous envoyons un code à 6 chiffres. Saisissez-le à l’étape suivante (sans cliquer sur un lien).",
-    otpSendButton: "Envoyer un code de connexion",
-    otpSent:
-      "Consultez votre e-mail pour un code à 6 chiffres. Vous pouvez aussi utiliser le lien dans l’e-mail.",
-    otpSentLocal:
-      "Consultez Mailpit pour votre code (http://127.0.0.1:54324).",
-    otpSentTo: "Code envoyé à",
-    otpCodeLabel: "Code de connexion",
-    otpCodePlaceholder: "123456",
-    otpCodeHint: "Indiqué dans votre e-mail. Expire dans quelques minutes.",
-    otpCodeRequired: "Entrez le code reçu par e-mail.",
-    otpVerifyButton: "Vérifier et se connecter",
-    otpResend: "Envoyer un nouveau code",
-    otpChangeEmail: "Utiliser une autre adresse",
-    resetSessionLink: "Blocage ? Réinitialiser la session",
-    sessionResetDone: "Session réinitialisée. Demandez un nouveau code ci-dessous.",
-    registerOtpHint:
-      "Nous envoyons un code à 6 chiffres pour finaliser la création du compte.",
-    registerOtpSendButton: "Envoyer un code d’inscription",
-    registerOtpVerifyButton: "Vérifier et terminer l’inscription",
-    registerOtpSent:
-      "Consultez votre e-mail pour un code à 6 chiffres afin de finaliser l’inscription.",
-    registerOtpSentLocal:
-      "Consultez Mailpit pour votre code (http://127.0.0.1:54324).",
-    magicLinkHint: "Nous enverrons un lien magique unique. Pas de mot de passe.",
+      "E-mail et mot de passe. Lien par e-mail en option (même navigateur).",
+    signInError: "Échec de connexion. Vérifiez vos identifiants ou réinitialisez la session",
+    passwordTab: "Mot de passe",
+    emailLinkTab: "Lien e-mail",
+    passwordLabel: "Mot de passe",
+    passwordPlaceholder: "Au moins 6 caractères",
+    passwordRequired: "Entrez votre mot de passe.",
+    passwordTooShort: "Le mot de passe doit contenir au moins 6 caractères.",
+    passwordSignInButton: "Se connecter",
+    registerPasswordHint: "Au moins 6 caractères. Pas d’e-mail à chaque visite ensuite.",
+    registerConfirmEmail:
+      "Compte créé. Si confirmation requise, consultez votre e-mail une fois, puis connectez-vous avec votre mot de passe.",
+    newPasswordLabel: "Nouveau mot de passe",
+    resetPasswordButton: "Mettre à jour le mot de passe",
+    resetPasswordTitle: "Nouveau mot de passe",
+    resetPasswordSubtitle: "Choisissez un nouveau mot de passe.",
+    forgotPasswordLink: "Mot de passe oublié ?",
+    forgotPasswordTitle: "Réinitialiser le mot de passe",
+    forgotPasswordSubtitle: "Nous envoyons un lien de réinitialisation (un e-mail).",
+    forgotPasswordHint: "Utilise l’e-mail du compte Supabase.",
+    forgotPasswordButton: "Envoyer le lien",
+    forgotPasswordSent: "Si le compte existe, un lien a été envoyé.",
+    backToSignIn: "Retour à la connexion",
+    magicLinkSameBrowserHint:
+      "Un e-mail. Ouvrez le lien dans ce même navigateur (pas l’app mail).",
     magicLinkButton: "Envoyer un lien magique",
-    magicLinkSent: "Consultez votre e-mail pour le lien magique.",
+    magicLinkSent:
+      "Lien envoyé. Ouvrez-le dans ce même navigateur (pas depuis l’app mail).",
     magicLinkSentLocal:
-      "Consultez Mailpit pour le lien magique (http://127.0.0.1:54324).",
+      "Lien envoyé. Ouvrez Mailpit (http://127.0.0.1:54324) dans ce navigateur.",
+    resetSessionLink: "Blocage ? Réinitialiser la session",
+    sessionResetDone: "Session réinitialisée. Connectez-vous ci-dessous.",
     noAccount: "Aucun compte pour cet e-mail. Créez-en un d’abord.",
     newHere: "Nouveau ici ?",
     createAccountLink: "Créer un compte",
     registerTitle: "Créer un compte",
     registerSubtitle:
-      "Choisissez Client ou Prestataire une fois. L’accès admin est séparé et ne peut pas s’auto-inscrire.",
+      "E-mail et mot de passe. Choisissez Client ou Prestataire une fois.",
     displayName: "Nom affiché",
     displayNamePlaceholder: "Maria",
-    registerMagicHint:
-      "Nous enverrons un lien magique pour finaliser la création du compte.",
     personaLegend: "Je suis…",
     clientTitle: "Client",
     clientDesc:
@@ -542,10 +537,6 @@ const fr: Messages = {
     supplierDesc:
       "Prestataire local — recevez des tâches, laissez notes et photos de passation.",
     createAccountButton: "Créer un compte",
-    registerMagicSent:
-      "Lien envoyé. Consultez votre e-mail pour finaliser l’inscription.",
-    registerMagicSentLocal:
-      "Lien envoyé. Ouvrez Mailpit (http://127.0.0.1:54324) pour finaliser l’inscription.",
     adminEmailReserved:
       "Cet e-mail est réservé à l’admin. Utilisez Connexion à la place.",
     choosePersona:
@@ -752,48 +743,46 @@ const el: Messages = {
   auth: {
     signInTitle: "Σύνδεση",
     signInSubtitle:
-      "Μόνο υπάρχοντες λογαριασμοί. Νέοι ιδιοκτήτες και συνεργάτες πρέπει πρώτα να εγγραφούν.",
-    signInError: "Η σύνδεση απέτυχε. Ζητήστε νέο κωδικό ή καθαρίστε τη συνεδρία",
-    otpHint:
-      "Στέλνουμε 6ψήφιο κωδικό. Εισάγετέ τον στο επόμενο βήμα (χωρίς link).",
-    otpSendButton: "Στείλτε κωδικό σύνδεσης",
-    otpSent:
-      "Ελέγξτε το e-mail για 6ψήφιο κωδικό. Μπορείτε επίσης να χρησιμοποιήσετε το link στο e-mail.",
-    otpSentLocal:
-      "Ελέγξτε το Mailpit για τον κωδικό (http://127.0.0.1:54324).",
-    otpSentTo: "Κωδικός στάλθηκε στο",
-    otpCodeLabel: "Κωδικός σύνδεσης",
-    otpCodePlaceholder: "123456",
-    otpCodeHint: "Από το e-mail σας. Λήγει σε λίγα λεπτά.",
-    otpCodeRequired: "Εισάγετε τον κωδικό από το e-mail.",
-    otpVerifyButton: "Επαλήθευση και σύνδεση",
-    otpResend: "Νέος κωδικός",
-    otpChangeEmail: "Άλλο e-mail",
-    resetSessionLink: "Κολλήσατε; Καθαρισμός συνεδρίας",
-    sessionResetDone: "Η συνεδρία καθαρίστηκε. Ζητήστε νέο κωδικό παρακάτω.",
-    registerOtpHint:
-      "Στέλνουμε 6ψήφιο κωδικό για να ολοκληρώσετε τη δημιουργία λογαριασμού.",
-    registerOtpSendButton: "Στείλτε κωδικό εγγραφής",
-    registerOtpVerifyButton: "Επαλήθευση και ολοκλήρωση εγγραφής",
-    registerOtpSent:
-      "Ελέγξτε το e-mail για 6ψήφιο κωδικό ολοκλήρωσης εγγραφής.",
-    registerOtpSentLocal:
-      "Ελέγξτε το Mailpit για τον κωδικό (http://127.0.0.1:54324).",
-    magicLinkHint: "Θα στείλουμε one-time magic link. Χωρίς κωδικό.",
+      "E-mail και κωδικός. Προαιρετικά link e-mail (ίδιος browser).",
+    signInError: "Η σύνδεση απέτυχε. Ελέγξτε τα στοιχεία ή καθαρίστε τη συνεδρία",
+    passwordTab: "Κωδικός",
+    emailLinkTab: "Link e-mail",
+    passwordLabel: "Κωδικός",
+    passwordPlaceholder: "Τουλάχιστον 6 χαρακτήρες",
+    passwordRequired: "Εισάγετε τον κωδικό σας.",
+    passwordTooShort: "Ο κωδικός πρέπει να έχει τουλάχιστον 6 χαρακτήρες.",
+    passwordSignInButton: "Σύνδεση",
+    registerPasswordHint: "Τουλάχιστον 6 χαρακτήρες. Μετά, χωρίς e-mail κάθε φορά.",
+    registerConfirmEmail:
+      "Ο λογαριασμός δημιουργήθηκε. Αν απαιτείται επιβεβαίωση, ελέγξτε το e-mail μία φορά, μετά συνδεθείτε με κωδικό.",
+    newPasswordLabel: "Νέος κωδικός",
+    resetPasswordButton: "Ενημέρωση κωδικού",
+    resetPasswordTitle: "Νέος κωδικός",
+    resetPasswordSubtitle: "Επιλέξτε νέο κωδικό για τον λογαριασμό σας.",
+    forgotPasswordLink: "Ξεχάσατε τον κωδικό;",
+    forgotPasswordTitle: "Επαναφορά κωδικού",
+    forgotPasswordSubtitle: "Στέλνουμε link επαναφοράς (ένα e-mail).",
+    forgotPasswordHint: "Χρησιμοποιεί το e-mail του λογαριασμού Supabase.",
+    forgotPasswordButton: "Αποστολή link",
+    forgotPasswordSent: "Αν υπάρχει λογαριασμός, στάλθηκε link.",
+    backToSignIn: "Πίσω στη σύνδεση",
+    magicLinkSameBrowserHint:
+      "Ένα e-mail. Ανοίξτε το link στον ίδιο browser (όχι από την app mail).",
     magicLinkButton: "Στείλτε magic link",
-    magicLinkSent: "Ελέγξτε το e-mail σας για το magic link.",
+    magicLinkSent:
+      "Στάλθηκε link. Ανοίξτε το στον ίδιο browser (όχι από την app mail).",
     magicLinkSentLocal:
-      "Ελέγξτε το Mailpit για το magic link (http://127.0.0.1:54324).",
+      "Στάλθηκε link. Ανοίξτε το Mailpit (http://127.0.0.1:54324) σε αυτόν τον browser.",
+    resetSessionLink: "Κολλήσατε; Καθαρισμός συνεδρίας",
+    sessionResetDone: "Η συνεδρία καθαρίστηκε. Συνδεθείτε παρακάτω.",
     noAccount: "Δεν υπάρχει λογαριασμός για αυτό το e-mail. Δημιουργήστε πρώτα.",
     newHere: "Νέος εδώ;",
     createAccountLink: "Δημιουργία λογαριασμού",
     registerTitle: "Δημιουργία λογαριασμού",
     registerSubtitle:
-      "Επιλέξτε Ιδιοκτήτης ή Συνεργάτη μία φορά. Η πρόσβαση admin είναι ξεχωριστή.",
+      "E-mail και κωδικός. Επιλέξτε Ιδιοκτήτης ή Συνεργάτη μία φορά.",
     displayName: "Εμφανιζόμενο όνομα",
     displayNamePlaceholder: "Maria",
-    registerMagicHint:
-      "Θα στείλουμε magic link για να ολοκληρώσετε τη δημιουργία λογαριασμού.",
     personaLegend: "Είμαι…",
     clientTitle: "Ιδιοκτήτης",
     clientDesc:
@@ -802,10 +791,6 @@ const el: Messages = {
     supplierDesc:
       "Τοπικός συνεργάτης — λάβετε εργασίες, αφήστε σημειώσεις και φωτογραφίες.",
     createAccountButton: "Δημιουργία λογαριασμού",
-    registerMagicSent:
-      "Στάλθηκε link. Ελέγξτε το e-mail για να ολοκληρώσετε την εγγραφή.",
-    registerMagicSentLocal:
-      "Στάλθηκε link. Ανοίξτε το Mailpit (http://127.0.0.1:54324) για την εγγραφή.",
     adminEmailReserved:
       "Αυτό το e-mail είναι για admin. Χρησιμοποιήστε Σύνδεση.",
     choosePersona:

@@ -1,8 +1,6 @@
 "use server";
 
-import { authCallbackUrl } from "@/lib/auth/app-origin";
 import { requireProfile } from "@/lib/auth/session";
-import { createAdminClient } from "@/lib/supabase/admin";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
@@ -249,37 +247,15 @@ export async function completeTaskWithHandoff(
   redirect(`/supplier/tasks/${taskId}`);
 }
 
-/** Best-effort magic-link ping so the supplier sees the new task (Mailpit locally). */
+/** Best-effort task notification. Skips auth email (PKCE magic links fail for server-sent mail on default Supabase templates). Suppliers sign in with password at /login. */
 export async function notifySupplierOfTask(input: {
   supplierEmail: string | null | undefined;
   taskId: string;
   taskTitle: string;
 }) {
-  if (!input.supplierEmail) return;
-
-  const origin = (
-    process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3010"
-  ).replace(/\/$/, "");
-
-  try {
-    const admin = createAdminClient();
-    await admin.auth.signInWithOtp({
-      email: input.supplierEmail.toLowerCase(),
-      options: {
-        shouldCreateUser: false,
-        emailRedirectTo: authCallbackUrl(
-          origin,
-          `/supplier/tasks/${input.taskId}`,
-        ),
-        data: {
-          notify: "task_assigned",
-          task_title: input.taskTitle,
-        },
-      },
-    });
-  } catch {
-    // Non-blocking — assignment still succeeds without email
-  }
+  void input;
+  // Intentionally no-op: server-triggered signInWithOtp emails use PKCE links that
+  // cannot work in the supplier's browser. Use in-app task list after password login.
 }
 
 export async function getTaskPhotoUrls(

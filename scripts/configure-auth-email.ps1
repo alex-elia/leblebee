@@ -50,10 +50,11 @@ $headers = @{
   "Content-Type" = "application/json"
 }
 
-$redirects = @(
+  $redirects = @(
   $SiteUrl,
   "$SiteUrl/",
   "$SiteUrl/auth/callback",
+  "$SiteUrl/login/reset-password",
   "$SiteUrl/**"
 ) -join ","
 
