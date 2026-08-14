@@ -1,4 +1,6 @@
 @import "tailwindcss";
+@source "../../elia-site-tools/packages/agent-next/src/**/*.{ts,tsx}";
+@source "../../node_modules/@elia/agent-next/dist/**/*.js";
 
 :root {
   /* Aegean service palette */

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Fraunces, Source_Sans_3 } from "next/font/google";
+import { ProductAssistant } from "@/components/product-assistant";
 import { getLocale } from "@/lib/i18n/get-locale";
 import "./globals.css";
 
@@ -37,7 +38,10 @@ export default async function RootLayout({
       lang={locale}
       className={`${fraunces.variable} ${sourceSans.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col text-ink">{children}</body>
+      <body className="min-h-full flex flex-col text-ink">
+        {children}
+        <ProductAssistant />
+      </body>
     </html>
   );
 }

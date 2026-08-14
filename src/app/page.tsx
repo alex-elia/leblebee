@@ -1,5 +1,4 @@
 import { MarketingShell } from "@/components/ui/marketing-shell";
-import { ProductAssistant } from "@/components/product-assistant";
 import { Button } from "@/components/ui/button";
 import { getI18n } from "@/lib/i18n/get-locale";
 import { getProfile, homePathForRole } from "@/lib/auth/session";
@@ -144,7 +143,6 @@ export default async function HomePage() {
           </a>
         </p>
       </footer>
-      <ProductAssistant />
     </MarketingShell>
   );
 }
