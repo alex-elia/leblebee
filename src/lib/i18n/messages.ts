@@ -36,6 +36,7 @@ export type Messages = {
     signInTitle: string;
     signInSubtitle: string;
     signInError: string;
+    pkceFailed: string;
     passwordTab: string;
     emailLinkTab: string;
     passwordLabel: string;
@@ -247,6 +248,8 @@ const en: Messages = {
     signInSubtitle:
       "Use your email and password. Email link is optional (open it in this same browser).",
     signInError: "Sign-in failed. Check your details or clear your session",
+    pkceFailed:
+      "That email link is no longer valid. Sign in with your password, or request a new email link and open it in this same browser without clearing the session first.",
     passwordTab: "Password",
     emailLinkTab: "Email link",
     passwordLabel: "Password",
@@ -491,6 +494,8 @@ const fr: Messages = {
     signInSubtitle:
       "E-mail et mot de passe. Lien par e-mail en option (même navigateur).",
     signInError: "Échec de connexion. Vérifiez vos identifiants ou réinitialisez la session",
+    pkceFailed:
+      "Ce lien e-mail n’est plus valide. Connectez-vous avec votre mot de passe, ou demandez un nouveau lien et ouvrez-le dans ce même navigateur sans effacer la session avant.",
     passwordTab: "Mot de passe",
     emailLinkTab: "Lien e-mail",
     passwordLabel: "Mot de passe",
@@ -745,6 +750,8 @@ const el: Messages = {
     signInSubtitle:
       "E-mail και κωδικός. Προαιρετικά link e-mail (ίδιος browser).",
     signInError: "Η σύνδεση απέτυχε. Ελέγξτε τα στοιχεία ή καθαρίστε τη συνεδρία",
+    pkceFailed:
+      "Αυτό το link e-mail δεν ισχύει πια. Συνδεθείτε με κωδικό, ή ζητήστε νέο link και ανοίξτε το στον ίδιο browser χωρίς να καθαρίσετε τη συνεδρία πριν.",
     passwordTab: "Κωδικός",
     emailLinkTab: "Link e-mail",
     passwordLabel: "Κωδικός",

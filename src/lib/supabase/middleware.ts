@@ -3,6 +3,7 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { clearSupabaseAuthCookiesOnResponse } from "@/lib/auth/clear-auth-cookies";
 import { homePathForRole, type UserRole } from "@/lib/auth/roles";
+import { getSupabaseCookieOptions } from "@/lib/supabase/cookie-options";
 
 function redirectPublic(
   request: NextRequest,
@@ -19,6 +20,19 @@ function redirectPublic(
 }
 
 export async function updateSession(request: NextRequest) {
+  const path = request.nextUrl.pathname;
+
+  // Do not touch cookies on the callback. Middleware getUser()/setAll was
+  // deleting or rewriting the PKCE verifier that exchangeCodeForSession needs.
+  if (path.startsWith("/auth/callback")) {
+    return NextResponse.next({ request });
+  }
+
+  // Magic-link sometimes lands on site_url with ?code= — forward to callback
+  if (request.nextUrl.searchParams.has("code")) {
+    return redirectPublic(request, "/auth/callback");
+  }
+
   let supabaseResponse = NextResponse.next({ request });
 
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -29,6 +43,7 @@ export async function updateSession(request: NextRequest) {
   }
 
   const supabase = createServerClient(supabaseUrl, supabaseAnonKey, {
+    cookieOptions: getSupabaseCookieOptions(),
     cookies: {
       getAll() {
         return request.cookies.getAll();
@@ -53,16 +68,6 @@ export async function updateSession(request: NextRequest) {
       supabaseResponse,
       request.cookies.getAll(),
     );
-  }
-
-  const path = request.nextUrl.pathname;
-
-  // Magic-link sometimes lands on site_url with ?code= — forward to callback
-  if (
-    request.nextUrl.searchParams.has("code") &&
-    !path.startsWith("/auth/callback")
-  ) {
-    return redirectPublic(request, "/auth/callback");
   }
 
   const isPublic =

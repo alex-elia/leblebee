@@ -34,11 +34,13 @@ export default async function LoginPage({
           <p className="text-sm font-semibold text-coral">
             {params.error === "session_reset"
               ? t.auth.sessionResetDone
-              : t.auth.signInError}
-            {params.error !== "auth" && params.error !== "session_reset"
-              ? ` (${params.error})`
-              : ""}
-            .
+              : params.error === "pkce" ||
+                  params.error.toLowerCase().includes("pkce") ||
+                  params.error.toLowerCase().includes("code verifier")
+                ? t.auth.pkceFailed
+                : params.error !== "auth"
+                  ? `${t.auth.signInError} (${params.error}).`
+                  : `${t.auth.signInError}.`}
           </p>
         ) : null}
         <SignInForm nextPath={nextPath} auth={t.auth} common={t.common} nav={t.nav} />
