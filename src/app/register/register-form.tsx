@@ -6,6 +6,7 @@ import {
   isRegistrableRole,
   type UserRole,
 } from "@/lib/auth/roles";
+import { authCallbackUrl, getClientAppOrigin } from "@/lib/auth/app-origin";
 import { resolvePostLoginPath } from "@/lib/auth/post-login";
 import { createClient } from "@/lib/supabase/client";
 import { Button, TextField } from "@/components/ui";
@@ -76,6 +77,7 @@ export function RegisterForm({
       email,
       password,
       options: {
+        emailRedirectTo: authCallbackUrl(getClientAppOrigin()),
         data: {
           role,
           ...(displayName ? { display_name: displayName } : {}),
@@ -86,7 +88,15 @@ export function RegisterForm({
     setPending(false);
 
     if (error) {
-      setState({ error: error.message });
+      const msg = error.message.toLowerCase();
+      const looksLikeMailer =
+        error.status === 500 ||
+        msg.includes("error sending") ||
+        msg.includes("smtp") ||
+        msg.includes("rate limit");
+      setState({
+        error: looksLikeMailer ? auth.registerEmailFailed : error.message,
+      });
       return;
     }
 

@@ -46,6 +46,7 @@ export type Messages = {
     passwordSignInButton: string;
     registerPasswordHint: string;
     registerConfirmEmail: string;
+    registerEmailFailed: string;
     newPasswordLabel: string;
     resetPasswordButton: string;
     resetPasswordTitle: string;
@@ -260,6 +261,8 @@ const en: Messages = {
     registerPasswordHint: "At least 6 characters. No email needed on each visit after this.",
     registerConfirmEmail:
       "Account created. If email confirmation is required, check your inbox once, then sign in with your password.",
+    registerEmailFailed:
+      "Email delivery failed (this is the SMTP setup, not your password). Try signing in. If that fails, turn off Confirm email in Supabase until Resend works.",
     newPasswordLabel: "New password",
     resetPasswordButton: "Update password",
     resetPasswordTitle: "Set a new password",
@@ -506,6 +509,8 @@ const fr: Messages = {
     registerPasswordHint: "Au moins 6 caractères. Pas d’e-mail à chaque visite ensuite.",
     registerConfirmEmail:
       "Compte créé. Si confirmation requise, consultez votre e-mail une fois, puis connectez-vous avec votre mot de passe.",
+    registerEmailFailed:
+      "Échec d’envoi d’e-mail (SMTP, pas le mot de passe). Essayez de vous connecter. Sinon, désactivez Confirm email dans Supabase le temps que Resend fonctionne.",
     newPasswordLabel: "Nouveau mot de passe",
     resetPasswordButton: "Mettre à jour le mot de passe",
     resetPasswordTitle: "Nouveau mot de passe",
@@ -762,6 +767,8 @@ const el: Messages = {
     registerPasswordHint: "Τουλάχιστον 6 χαρακτήρες. Μετά, χωρίς e-mail κάθε φορά.",
     registerConfirmEmail:
       "Ο λογαριασμός δημιουργήθηκε. Αν απαιτείται επιβεβαίωση, ελέγξτε το e-mail μία φορά, μετά συνδεθείτε με κωδικό.",
+    registerEmailFailed:
+      "Αποτυχία αποστολής e-mail (SMTP, όχι ο κωδικός). Δοκιμάστε σύνδεση. Αν αποτύχει, απενεργοποιήστε Confirm email στο Supabase μέχρι να δουλέψει το Resend.",
     newPasswordLabel: "Νέος κωδικός",
     resetPasswordButton: "Ενημέρωση κωδικού",
     resetPasswordTitle: "Νέος κωδικός",
